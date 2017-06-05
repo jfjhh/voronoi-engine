@@ -123,8 +123,27 @@ Hitbox Player::getHitbox(void) const
 	hit_circle.x = x + (sprite.getSWidth()  / 2);
 	hit_circle.y = y + (sprite.getSHeight() / 2);
 	hit_circle.r = 8;
-	h.addCircle(hit_circle);
+	h.add(hit_circle);
 
 	return h;
+}
+
+int Player::getX(void) const
+{
+	return x;
+}
+
+int Player::getY(void) const
+{
+	return y;
+}
+
+void Player::setPosition(int px, int py)
+{
+	int sw = sprite.getSWidth()  / 2;
+	int sh = sprite.getSHeight() / 2;
+
+	x = std::min(std::max(sw, px), SCREEN_WIDTH)  - sw;
+	y = std::min(std::max(sh, py), SCREEN_HEIGHT) - sh;
 }
 

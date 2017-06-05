@@ -74,7 +74,7 @@ bool init(void)
 		}
 	}
 
-	SDL_SetRenderDrawColor(gRenderer, 0xff, 0xff, 0xff, 0xff);
+	SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xff);
 
 	/* Initialize SDL_image. */
 	int img_flags = IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF;
@@ -207,6 +207,7 @@ int main(int argc, const char **argv)
 	player.sprite.setSGrid(32, 32);
 	player.sprite.setSID(Player::Sprite::CENTER);
 	player.sprite.setColor(255, 0, 255);
+	player.setPosition(SCREEN_WIDTH / 2, 4 * SCREEN_HEIGHT / 5);
 
 	std::stringstream timeText;
 	fpsTimer.start();
@@ -269,23 +270,34 @@ int main(int argc, const char **argv)
 		player.move();
 
 		/* Clear the screen. */
-		SDL_SetRenderDrawColor(gRenderer, 0xff, 0xff, 0xff, 0xff);
+		SDL_SetRenderDrawColor(gRenderer, 0x88, 0x88, 0x88, 0xff);
 		SDL_RenderClear(gRenderer);
 
 		/* Copy the background image. */
-		Uint8 red   = rand() * (int)(255);
-		Uint8 green = rand() * (int)(255);
-		Uint8 blue  = rand() * (int)(255);
+		/* Uint8 red   = rand() * (int)(255); */
+		/* Uint8 green = rand() * (int)(255); */
+		/* Uint8 blue  = rand() * (int)(255); */
+		Uint8 red   = 128 + ((1 * countedFrames / 3) % 63);
+		Uint8 green = 128 + ((4 * countedFrames / 3) % 127);
+		Uint8 blue  = 128 + ((3 * countedFrames / 3) % 159);
 		gBgTexture.setColor(red, green, blue);
-		gBgTexture.render((SCREEN_WIDTH - 512) / 2,
-				(SCREEN_HEIGHT - 512) / 2,
-				512, 512,
+		gBgTexture.render((SCREEN_WIDTH - 1024) / 2,
+				(SCREEN_HEIGHT - 1024) / 2,
+				1024, 1024,
 				NULL, angle, NULL, SDL_FLIP_NONE);
 
-		angle += 2*M_PI / 16;
+		angle += 2*M_PI / 64;
 
-		/* Draw a crosshair line of pink dots. */
-		SDL_SetRenderDrawColor(gRenderer, 0xff, 0x00, 0xff, 0xff);
+		/* Draw the player. */
+		player.render();
+
+		/* Draw text. */
+		gTextTexture.render((SCREEN_WIDTH - gTextTexture.getWidth()) / 2, 36);
+		gFPSTexture.render(SCREEN_WIDTH / 2,
+				SCREEN_HEIGHT - gFPSTexture.getHeight());
+
+		/* Draw a crosshair line of black dots. */
+		SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xff);
 		for (int i = 0; i < SCREEN_HEIGHT; i += 3)
 		{
 			SDL_RenderDrawPoint(gRenderer, SCREEN_WIDTH / 2, i);
@@ -295,13 +307,6 @@ int main(int argc, const char **argv)
 			SDL_RenderDrawPoint(gRenderer, i, SCREEN_HEIGHT / 2);
 		}
 
-		/* Draw the player. */
-		player.render();
-
-		/* Draw text. */
-		gTextTexture.render((SCREEN_WIDTH - gTextTexture.getWidth()) / 2, 36);
-		gFPSTexture.render(SCREEN_WIDTH / 2,
-				SCREEN_HEIGHT - gFPSTexture.getHeight());
 
 		/* Update the screen. */
 		SDL_RenderPresent(gRenderer);

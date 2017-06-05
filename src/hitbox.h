@@ -26,12 +26,17 @@ class Hitbox
 		/**
 		 * Adds a rectangle to the hitbox.
 		 */
-		void addRect(SDL_Rect rect);
+		void add(SDL_Rect rect);
 
 		/**
 		 * Adds a circle to the hitbox.
 		 */
-		void addCircle(Circle circle);
+		void add(Circle circle);
+
+		/**
+		 * Adds the hitboxes elements to this hitbox.
+		 */
+		void add(const Hitbox h);
 
 		/**
 		 * Checks intersection.
@@ -44,6 +49,16 @@ class Hitbox
 		 * Computes the union rectangle of rects.
 		 */
 		SDL_Rect unionRect(void) const;
+
+		/**
+		 * Gets the hitboxes rectangle vector.
+		 */
+		std::vector<SDL_Rect> getRects(void) const;
+
+		/**
+		 * Gets the hitboxes circle vector.
+		 */
+		std::vector<Circle> getCircles(void) const;
 };
 
 #endif /* HITBOX_H */

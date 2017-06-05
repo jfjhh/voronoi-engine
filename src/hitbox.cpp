@@ -1,13 +1,21 @@
 #include "hitbox.h"
 
-void Hitbox::addRect(SDL_Rect rect)
+void Hitbox::add(SDL_Rect rect)
 {
 	rects.push_back(rect);
 }
 
-void Hitbox::addCircle(Circle circle)
+void Hitbox::add(Circle circle)
 {
 	circles.push_back(circle);
+}
+
+void Hitbox::add(const Hitbox h)
+{
+	std::vector<SDL_Rect> r = h.getRects();
+	std::vector<Circle>   c = h.getCircles();
+	rects.insert(rects.end(),      r.begin(),  r.end());
+	circles.insert(circles.end(),  c.begin(),  c.end());
 }
 
 bool Hitbox::intersects(Hitbox h) const
@@ -78,5 +86,15 @@ SDL_Rect Hitbox::unionRect(void) const
 	}
 
 	return u;
+}
+
+std::vector<SDL_Rect> Hitbox::getRects(void) const
+{
+	return rects;
+}
+
+std::vector<Circle> Hitbox::getCircles(void) const
+{
+	return circles;
 }
 

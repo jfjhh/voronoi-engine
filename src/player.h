@@ -64,8 +64,8 @@ class Player
 		 * Initializes the player.
 		 */
 		Player(std::string sprite_filename):
-			x(0),
-			y(0),
+			x(SCREEN_WIDTH  / 2),
+			y(SCREEN_HEIGHT / 2),
 			vx(0),
 			vy(0),
 			focused(false),
@@ -98,6 +98,21 @@ class Player
 		 * Gets the player's hitbox.
 		 */
 		Hitbox getHitbox(void) const;
+
+		/**
+		 * Gets the player's x position.
+		 */
+		int getX(void) const;
+
+		/**
+		 * Gets the player's y position.
+		 */
+		int getY(void) const;
+
+		/**
+		 * Sets the player's position.
+		 */
+		void setPosition(int px, int py);
 };
 
 #endif /* PLAYER_H */
