@@ -30,7 +30,8 @@ class Player
 		/**
 		 * Keys pressed for motion along an axis.
 		 */
-		int xmotion, ymotion;
+		int  xmotion, ymotion;
+		bool up_last, left_last, up, down, left, right;
 
 	public:
 		/**

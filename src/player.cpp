@@ -7,39 +7,84 @@ Player::~Player()
 
 void Player::handleEvent(SDL_Event &e)
 {
-	/* Change velocities according to key directions. */
-    if ((e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) && e.key.repeat == 0) {
-		int direction = (e.type == SDL_KEYDOWN) ? 1 : -1;
-		int velocity  = focused ? VELOCITY / FVELOCITY : VELOCITY;
-		velocity     *= direction;
+	/* Update key states. */
+    if (e.type == SDL_KEYDOWN && e.key.repeat == 0) {
         switch (e.key.keysym.sym) {
             case SDLK_UP:
-				vy -= velocity;
+				up_last = true;
+				up      = true;
+				ymotion++;
 				break;
             case SDLK_DOWN:
-				vy += velocity;
+				up_last = false;
+				down    = true;
+				ymotion++;
 				break;
             case SDLK_LEFT:
-				vx -= velocity;
+				left_last = true;
+				left      = true;
+				xmotion++;
 				break;
             case SDLK_RIGHT:
-				vx += velocity;
+				left_last = false;
+				right     = true;
+				xmotion++;
 				break;
 			case SDLK_LSHIFT:
-				if (e.type == SDL_KEYDOWN) {
-					focused = true;
-					vx /= FVELOCITY;
-					vy /= FVELOCITY;
-				} else {
-					focused = false;
-					vx *= FVELOCITY;
-					vy *= FVELOCITY;
-				}
+				focused = true;
+			default:
+				break;
+        }
+    } else if (e.type == SDL_KEYUP && e.key.repeat == 0) {
+        switch (e.key.keysym.sym) {
+            case SDLK_UP:
+				up = false;
+				ymotion--;
+				break;
+            case SDLK_DOWN:
+				down = false;
+				ymotion--;
+				break;
+            case SDLK_LEFT:
+				left = false;
+				xmotion--;
+				break;
+            case SDLK_RIGHT:
+				right = false;
+				xmotion--;
+				break;
+			case SDLK_LSHIFT:
+				focused = false;
 			default:
 				break;
         }
     }
 
+	int velocity = focused ? VELOCITY / FVELOCITY : VELOCITY;
+
+	/* Set the x velocity. */
+	if (xmotion == 0) {
+		vx = 0;
+	} else {
+		if ((left_last && left) || !right) {
+			vx = -velocity;
+		} else {
+			vx = +velocity;
+		}
+	}
+
+	/* Set the y velocity. */
+	if (ymotion == 0) {
+		vy = 0;
+	} else {
+		if ((up_last && up) || !down) {
+			vy = -velocity;
+		} else {
+			vy = +velocity;
+		}
+	}
+
+	/* Set player sprite based on direction of motion. */
 	int s;
 	if (vx < 0) {
 		s = Player::Sprite::LEFT;
@@ -48,12 +93,8 @@ void Player::handleEvent(SDL_Event &e)
 	} else {
 		s = Player::Sprite::CENTER;
 	}
-	
-	if (focused) {
-		s += Player::Sprite::FOCUS;
-	}
 
-	sprite.setSID(s);
+	sprite.setSID(focused ? s + Player::Sprite::FOCUS : s);
 }
 
 void Player::move(void)
