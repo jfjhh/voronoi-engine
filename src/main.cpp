@@ -214,7 +214,7 @@ int main(int argc, const char **argv)
 	while (!user_quit) {
 		/* Calclulate FPS. */
 		float meanFPS = countedFrames / (fpsTimer.getTicks() / 1e3);
-		if (meanFPS > 2e6) { /* Extremely high FPS are erroneous. */
+		if (meanFPS > 1e6) { /* Extremely high FPS are erroneous. */
 			meanFPS = 0;
 		}
 

@@ -8,6 +8,7 @@
 
 #include "pob.h"
 #include "ptexture.h"
+#include "hitbox.h"
 
 class Player
 {
@@ -92,6 +93,11 @@ class Player
 		 * Renders the player.
 		 */
 		void render(void) const;
+
+		/**
+		 * Gets the player's hitbox.
+		 */
+		Hitbox getHitbox(void) const;
 };
 
 #endif /* PLAYER_H */

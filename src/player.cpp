@@ -115,3 +115,16 @@ void Player::render(void) const
 	sprite.render(x, y);
 }
 
+Hitbox Player::getHitbox(void) const
+{
+	Hitbox h;
+	Circle hit_circle;
+
+	hit_circle.x = x + (sprite.getSWidth()  / 2);
+	hit_circle.y = y + (sprite.getSHeight() / 2);
+	hit_circle.r = 8;
+	h.addCircle(hit_circle);
+
+	return h;
+}
+
