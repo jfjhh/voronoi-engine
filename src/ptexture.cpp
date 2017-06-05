@@ -34,8 +34,10 @@ bool PTexture::load(std::string filename)
 					path.c_str(), SDL_GetError());
 		}
 
-		width  = loaded->w;
-		height = loaded->h;
+		width   = loaded->w;
+		height  = loaded->h;
+		swidth  = width;
+		sheight = height;
 		SDL_FreeSurface(loaded);
 	}
 
@@ -91,6 +93,34 @@ void PTexture::setAlpha(Uint8 alpha)
 	SDL_SetTextureAlphaMod(texture, alpha);
 }
 
+void PTexture::setSGrid(int w, int h)
+{
+	if (0 >= w || w > width || 0 >= h || h > height) {
+		swidth  = width;
+		sheight = height;
+	} else {
+		swidth  = w;
+		sheight = h;
+	}
+}
+
+void PTexture::setSID(int id)
+{
+	if (0 >= id || id > (width / swidth) * (height / sheight)) {
+		sid        = 0;
+		sbox       = {0, 0, getWidth(), getHeight()};
+		sprite_box = NULL;
+	} else {
+		int cols   = width / swidth;
+		sid        = id;
+		sbox       = {
+			swidth * ((sid - 1) % cols), sheight * ((sid - 1) / cols),
+			swidth,                      sheight
+		};
+		sprite_box = &sbox;
+	}
+}
+
 void PTexture::render(int x, int y) const
 {
 	render(x, y, width, height);
@@ -98,7 +128,7 @@ void PTexture::render(int x, int y) const
 
 void PTexture::render(int x, int y, int w, int h) const
 {
-	render(x, y, w, h, NULL);
+	render(x, y, w, h, sprite_box);
 }
 
 void PTexture::render(int x, int y, int w, int h, SDL_Rect *clip) const
@@ -140,5 +170,15 @@ int PTexture::getWidth(void) const
 int PTexture::getHeight(void) const
 {
 	return height;
+}
+
+int PTexture::getSWidth(void) const
+{
+	return swidth;
+}
+
+int PTexture::getSHeight(void) const
+{
+	return sheight;
 }
 

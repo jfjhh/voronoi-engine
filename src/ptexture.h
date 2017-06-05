@@ -6,18 +6,13 @@
 #ifndef PTEXTURE_H
 #define PTEXTURE_H
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
 #include "pob.h"
 
 class PTexture
 {
 	protected:
-		int width, height;
+		int width, height, swidth, sheight, sid;
+		SDL_Rect    *sprite_box, sbox;
 		SDL_Texture *texture;
 
 	public:
@@ -27,6 +22,11 @@ class PTexture
 		PTexture():
 			width(0),
 			height(0),
+			swidth(0),
+			sheight(0),
+			sid(0),
+			sprite_box(NULL),
+			sbox({0, 0, 0, 0}),
 			texture(NULL) {
 				setBlendMode(SDL_BLENDMODE_BLEND);
 			}
@@ -68,6 +68,16 @@ class PTexture
 		void setAlpha(Uint8 alpha);
 
 		/**
+		 * Set the sprite dimensions of a sprite sheet.
+		 */
+		void setSGrid(int w, int h);
+
+		/**
+		 * Set sprite id (sid), to change clipping box on texture.
+		 */
+		void setSID(int id);
+
+		/**
 		 * Renders the texture at the given coordinates.
 		 */
 		virtual void render(int x, int y) const;
@@ -87,6 +97,16 @@ class PTexture
 		 * Gets the texture's height.
 		 */
 		int getHeight(void) const;
+
+		/**
+		 * Gets the texture's sprite width.
+		 */
+		int getSWidth(void) const;
+
+		/**
+		 * Gets the texture's sprite height.
+		 */
+		int getSHeight(void) const;
 };
 
 #endif /* PTEXTURE_H */

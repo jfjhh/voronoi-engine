@@ -18,6 +18,14 @@
 #define VERSION	"v0.0.0"
 #endif /* VERSION */
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <string>
+#include <sstream>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
+
 /**
  * Screen dimensions.
  */

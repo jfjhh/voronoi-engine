@@ -3,15 +3,10 @@
  * Alex Striff.
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_mixer.h>
 #include "pob.h"
 #include "ptexture.h"
+#include "ptimer.h"
+#include "player.h"
 
 /**
  * Screen dimensions.
@@ -28,6 +23,7 @@ SDL_Surface  *gImage    = NULL; /**< A image to be loaded and displayed.    */
 TTF_Font     *gFont;            /**< The default font.                      */
 PTexture      gBgTexture;       /**< The background texture.                */
 PTexture      gTextTexture;     /**< A texture used for displaying text.    */
+PTexture      gFPSTexture;      /**< A texture used for displaying text.    */
 
 /**
  * Starts SDL and creates the window.
@@ -108,10 +104,9 @@ void quit(int status)
 	gImage = NULL;
 
 	/* Destroy textures. */
-	/* SDL_DestroyTexture(gTexture); */
-	/* gTexture = NULL; */
 	gBgTexture.free();
 	gTextTexture.free();
+	gFPSTexture.free();
 
 	/* Destroy renderer. */
 	SDL_DestroyRenderer(gRenderer);
@@ -176,8 +171,8 @@ bool load_media(void)
 	}
 
 	/* Render title text. */
-	SDL_Color text_color = { 255, 0, 255 };
-	if (!gTextTexture.load_text("Perfect Ostrove Blossom", text_color)) {
+	SDL_Color textColor = { 255, 0, 255 };
+	if (!gTextTexture.load_text("Perfect Ostrove Blossom", textColor)) {
 		fputs("Failed to render title text!\n", stderr);
 		quit(EXIT_FAILURE);
 	}
@@ -201,12 +196,35 @@ int main(int argc, const char **argv)
 	}
 
 	/* Main loop. */
-	bool user_quit = false;
 	SDL_Event e;
+	PTimer    fpsTimer;
+	SDL_Color textColor     = { 255, 0, 255 };
+	int       countedFrames = 0;
+	double    angle         = 0.0;
+	bool      user_quit     = false;
 
-	double angle = 0.0;
+	Player player("player_sprites.png");
+	player.sprite.setSGrid(32, 32);
+	player.sprite.setSID(Player::Sprite::CENTER);
+	player.sprite.setColor(255, 0, 255);
+
+	std::stringstream timeText;
+	fpsTimer.start();
 
 	while (!user_quit) {
+		/* Calclulate FPS. */
+		float meanFPS = countedFrames / (fpsTimer.getTicks() / 1e3);
+		if (meanFPS > 2e6) { /* Extremely high FPS are erroneous. */
+			meanFPS = 0;
+		}
+
+		/* Render FPS texture. */
+		timeText.str("");
+		timeText << "FPS: " << meanFPS;
+		if (!gFPSTexture.load_text(timeText.str().c_str(), textColor)) {
+			fputs("Could not render FPS texture!\n", stderr);
+		}
+
 		/* Handle events on queue. */
 		while (SDL_PollEvent(&e)) {
 			switch (e.type) {
@@ -215,17 +233,29 @@ int main(int argc, const char **argv)
 					break;
 				case SDL_KEYDOWN: /* Key pressed. */
 					switch (e.key.keysym.sym) {
-						case SDLK_UP:
-							break;
-						case SDLK_DOWN:
-							break;
-						case SDLK_LEFT:
-							break;
-						case SDLK_RIGHT:
-							break;
 						case SDLK_ESCAPE:
 						case SDLK_q:
 							user_quit = true;
+							break;
+						case SDLK_UP:
+						case SDLK_DOWN:
+						case SDLK_LEFT:
+						case SDLK_RIGHT:
+						case SDLK_LSHIFT:
+							player.handleEvent(e);
+							break;
+						default:
+							break;
+					}
+					break;
+				case SDL_KEYUP: /* Key released. */
+					switch (e.key.keysym.sym) {
+						case SDLK_UP:
+						case SDLK_DOWN:
+						case SDLK_LEFT:
+						case SDLK_RIGHT:
+						case SDLK_LSHIFT:
+							player.handleEvent(e);
 							break;
 						default:
 							break;
@@ -235,6 +265,8 @@ int main(int argc, const char **argv)
 					break;
 			}
 		}
+
+		player.move();
 
 		/* Clear the screen. */
 		SDL_SetRenderDrawColor(gRenderer, 0xff, 0xff, 0xff, 0xff);
@@ -263,11 +295,17 @@ int main(int argc, const char **argv)
 			SDL_RenderDrawPoint(gRenderer, i, SCREEN_HEIGHT / 2);
 		}
 
+		/* Draw the player. */
+		player.render();
+
 		/* Draw text. */
 		gTextTexture.render((SCREEN_WIDTH - gTextTexture.getWidth()) / 2, 36);
+		gFPSTexture.render(SCREEN_WIDTH / 2,
+				SCREEN_HEIGHT - gFPSTexture.getHeight());
 
 		/* Update the screen. */
 		SDL_RenderPresent(gRenderer);
+		countedFrames++;
 	}
 
 	quit(EXIT_SUCCESS);
