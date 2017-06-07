@@ -16,7 +16,7 @@ class Player
 		/**
 		 * The offsets of the player's position.
 		 */
-		int x, y;
+		double x, y;
 
 		/**
 		 * The velocities of the player.
@@ -34,16 +34,21 @@ class Player
 		int  xmotion, ymotion;
 		bool up_last, left_last, up, down, left, right;
 
+		/**
+		 * Player hitbox.
+		 */
+		Hitbox hitbox;
+
 	public:
 		/**
 		 * The maximum velocity of the player.
 		 */
-		static const int VELOCITY  = 8;
+		static const int VELOCITY = 500;
 
 		/**
-		 * The focused velocity divisor. Must be a divisor of VELOCITY.
+		 * The focused velocity divisor.
 		 */
-		static const int FVELOCITY = 2;
+		static constexpr double FVELOCITY = 3;
 
 		/**
 		 * The sprite enum.
@@ -72,6 +77,10 @@ class Player
 			xmotion(0),
 			ymotion(0) {
 				sprite.load(sprite_filename);
+				sprite.setSGrid(32, 32);
+
+				Circle hit_circle = {0, 0, 5};
+				hitbox.add(hit_circle);
 			}
 
 		/**
@@ -87,12 +96,17 @@ class Player
 		/**
 		 * Moves the player.
 		 */
-		void move(void);
+		void move(double time);
 
 		/**
 		 * Renders the player.
 		 */
 		void render(void) const;
+
+		/**
+		 * Gets the angle from a position to the player.
+		 */
+		double angleFrom(double xf, double yf) const;
 
 		/**
 		 * Gets the player's hitbox.
@@ -102,17 +116,17 @@ class Player
 		/**
 		 * Gets the player's x position.
 		 */
-		int getX(void) const;
+		double getX(void) const;
 
 		/**
 		 * Gets the player's y position.
 		 */
-		int getY(void) const;
+		double getY(void) const;
 
 		/**
 		 * Sets the player's position.
 		 */
-		void setPosition(int px, int py);
+		void setPosition(double px, double py);
 };
 
 #endif /* PLAYER_H */

@@ -13,22 +13,22 @@ void Spellcard::free(void)
 	danmaku.clear();
 }
 
-void Spellcard::addDanmaku(Danmaku &d)
+void Spellcard::addDanmaku(Danmaku d)
 {
 	danmaku.push_back(d);
 }
 
-void Spellcard::update(float time)
+void Spellcard::update(void)
 {
 	for (size_t i = 0; i < danmaku.size(); i++) {
-		danmaku[i].update(time);
+		danmaku[i].update();
 	}
 }
 
-void Spellcard::render(float time)
+void Spellcard::render(void)
 {
 	for (size_t i = 0; i < danmaku.size(); i++) {
-		danmaku[i].render(time);
+		danmaku[i].render();
 	}
 }
 

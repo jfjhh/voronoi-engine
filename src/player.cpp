@@ -97,53 +97,55 @@ void Player::handleEvent(SDL_Event &e)
 	sprite.setSID(focused ? s + Player::Sprite::FOCUS : s);
 }
 
-void Player::move(void)
+void Player::move(double time)
 {
-	x += vx;
-	if (0 > x || x + sprite.getSWidth() > SCREEN_WIDTH) {
-		x -= vx;
-	}
+	double hw = sprite.getSWidth()  / 2;
+	double hh = sprite.getSHeight() / 2;
 
-	y += vy;
-	if (0 > y || y + sprite.getSHeight() > SCREEN_HEIGHT) {
-		y -= vy;
-	}
+	x += vx * time;
+	x = std::max(std::min(x, SCREEN_WIDTH - hw), hw);
+
+	y += vy * time;
+	y = std::max(std::min(y, SCREEN_HEIGHT - hh), hh);
 }
 
 void Player::render(void) const
 {
+	SDL_SetRenderDrawColor(gRenderer, 0x00, 0xff, 0x00, 0xff);
 	sprite.render(x, y);
+	getHitbox().render();
+}
+
+double Player::angleFrom(double xf, double yf) const
+{
+	return atan2(y - yf, x - xf);
 }
 
 Hitbox Player::getHitbox(void) const
 {
-	Hitbox h;
-	Circle hit_circle;
+	Hitbox h = hitbox;
 
-	hit_circle.x = x + (sprite.getSWidth()  / 2);
-	hit_circle.y = y + (sprite.getSHeight() / 2);
-	hit_circle.r = 8;
-	h.add(hit_circle);
+	h.offset(x, y);
 
 	return h;
 }
 
-int Player::getX(void) const
+double Player::getX(void) const
 {
 	return x;
 }
 
-int Player::getY(void) const
+double Player::getY(void) const
 {
 	return y;
 }
 
-void Player::setPosition(int px, int py)
+void Player::setPosition(double px, double py)
 {
-	int sw = sprite.getSWidth()  / 2;
-	int sh = sprite.getSHeight() / 2;
+	double hw = sprite.getSWidth()  / 2;
+	double hh = sprite.getSHeight() / 2;
 
-	x = std::min(std::max(sw, px), SCREEN_WIDTH)  - sw;
-	y = std::min(std::max(sh, py), SCREEN_HEIGHT) - sh;
+	x = std::min(std::max(hw, px), SCREEN_WIDTH  - hw);
+	y = std::min(std::max(hh, py), SCREEN_HEIGHT - hh);
 }
 

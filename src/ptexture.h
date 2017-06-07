@@ -7,13 +7,15 @@
 #define PTEXTURE_H
 
 #include "pob.h"
+#include "circle.h"
 
 class PTexture
 {
 	protected:
-		int width, height, swidth, sheight, sid;
+		int width, height, swidth, sheight, sid, pitch;
 		SDL_Rect    *sprite_box, sbox;
 		SDL_Texture *texture;
+		void        *pixels;
 
 	public:
 		/**
@@ -25,9 +27,11 @@ class PTexture
 			swidth(0),
 			sheight(0),
 			sid(0),
+			pitch(0),
 			sprite_box(NULL),
 			sbox({0, 0, 0, 0}),
-			texture(NULL) {
+			texture(NULL),
+			pixels(NULL) {
 				setBlendMode(SDL_BLENDMODE_BLEND);
 			}
 
@@ -44,7 +48,7 @@ class PTexture
 		/**
 		 * Loads a texture from a file.
 		 */
-		bool load(std::string filename);
+		bool load(std::string filename, SDL_Color color = {0, 0, 0, 0});
 
 		/**
 		 * Create a text texture from a string.
@@ -89,6 +93,16 @@ class PTexture
 				double angle, SDL_Point *center, SDL_RendererFlip flip) const;
 
 		/**
+		 * Gets the rectangle of the sprite's bounds.
+		 */
+		SDL_Rect getRect(void) const;
+
+		/**
+		 * Gets the inscribed circle of the sprite's bounds.
+		 */
+		Circle getCircle(void) const;
+
+		/**
 		 * Gets the texture's width.
 		 */
 		int getWidth(void) const;
@@ -107,6 +121,14 @@ class PTexture
 		 * Gets the texture's sprite height.
 		 */
 		int getSHeight(void) const;
+
+		/**
+		 * Manipulate texture pixels.
+		 */
+		bool lockTexture();
+		bool unlockTexture();
+		void *getPixels() const;
+		int getPitch() const;
 };
 
 #endif /* PTEXTURE_H */

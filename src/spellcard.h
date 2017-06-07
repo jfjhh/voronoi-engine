@@ -7,6 +7,7 @@
 #define SPELLCARD_H
 
 #include <vector>
+#include "pobject.h"
 #include "danmaku.h"
 
 class Spellcard
@@ -15,11 +16,6 @@ class Spellcard
 		std::vector<Danmaku> danmaku;
 
 	public:
-		/**
-		 * Initializes the spell card.
-		 */
-		Spellcard();
-		
 		/**
 		 * Destroys the spell card.
 		 */
@@ -33,17 +29,17 @@ class Spellcard
 		/**
 		 * Adds a danmaku to the spell card.
 		 */
-		void addDanmaku(Danmaku &d);
+		void addDanmaku(Danmaku d);
 
 		/**
 		 * Updates the spell card's danmaku.
 		 */
-		void update(float time);
+		void update(void);
 
 		/**
 		 * Renders the spell card's danmaku.
 		 */
-		void render(float time);
+		void render(void);
 
 		/**
 		 * Gets the union hitbox of the danmaku hitboxes.

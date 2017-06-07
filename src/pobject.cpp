@@ -1,5 +1,7 @@
 #include "pobject.h"
 
+const PTexture PObject::NO_TEXTURE;
+
 PObject::~PObject()
 {
 	free();
@@ -7,40 +9,83 @@ PObject::~PObject()
 
 void PObject::free(void)
 {
-	texture.free();
+	/* Not needed because the texture is a reference. */
+	/* texture.free(); */
 }
 
-void PObject::update(float time)
+void PObject::update(void)
 {
-	/* TODO: Update linear acceleration according to function. */
-	/* TODO: Update angular acceleration according to function. */
+	/* Get time. */
+	double time = getTime();
 
 	/* Update linear velocity. */
 	v += a  * time;
-	v  = std::max(std::min(v, vmax), 0.0);
+	v  = std::max(std::min(v, vmax), -vmax);
 
 	/* Update angular velocity. */
 	w += aa * time;
-	w  = std::max(std::min(w, wmax), 0.0);
+	w  = std::max(std::min(w, wmax), -wmax);
 
 	/* Update angle. */
-	t += w;
+	t += w * time;
 
 	/* Update x position. */
-	x  = v * cos(t) * time;
+	x += v * cos(t) * time;
 
 	/* Update y position. */
-	y  = v * sin(t) * time;
+	y += v * sin(t) * time;
 }
 
-void PObject::render(float time)
+void PObject::offset(double dx, double dy)
 {
-	texture.render(((int) x) + (texture.getSWidth() / 2),
-			((int) y) + (texture.getSHeight() / 2));
+	x += dx;
+	y += dy;
+}
+
+void PObject::setHitbox(Hitbox h)
+{
+	hitbox = h;
 }
 
 Hitbox PObject::getHitbox(void) const
 {
-	return hitbox;
+	Hitbox h = hitbox;
+	h.offset(x, y);
+	return h;
+}
+
+void PObject::start(void)
+{
+	timer.start();
+}
+
+void PObject::stop(void)
+{
+	timer.stop();
+}
+
+void PObject::pause(void)
+{
+	timer.pause();
+}
+
+void PObject::unpause(void)
+{
+	timer.unpause();
+}
+
+double PObject::getTime(void) const
+{
+	return timer.getTicks() / 1e3;
+}
+
+bool PObject::isStarted(void) const
+{
+	return timer.isStarted();
+}
+
+bool PObject::isPaused(void) const
+{
+	return timer.isPaused();
 }
 

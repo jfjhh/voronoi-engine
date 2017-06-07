@@ -18,8 +18,18 @@
 #define VERSION	"v0.0.0"
 #endif /* VERSION */
 
+#ifdef NVSYNC
+#ifndef VSYNC
+#undef VSYNC
+#endif /* VSYNC */
+#else
+#define VSYNC
+#endif /* NVSYNC */
+
 #include <stdlib.h>
 #include <stdio.h>
+#include <memory>
+#include <vector>
 #include <string>
 #include <sstream>
 #include <SDL2/SDL.h>
@@ -31,6 +41,12 @@
  */
 extern int SCREEN_WIDTH;
 extern int SCREEN_HEIGHT;
+
+/**
+ * Timing variables.
+ */
+extern int    SCREEN_FPS;
+extern double SCREEN_TICKS;
 
 /**
  * Global SDL variables.

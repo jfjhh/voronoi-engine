@@ -21,7 +21,10 @@ class Hitbox
 		/**
 		 * Initializes the hitbox.
 		 */
-		/* Hitbox(); */
+		Hitbox(std::vector<SDL_Rect> rx = std::vector<SDL_Rect>(),
+				std::vector<Circle>  cx = std::vector<Circle>()):
+			rects(rx),
+			circles(cx) {}
 
 		/**
 		 * Adds a rectangle to the hitbox.
@@ -49,6 +52,16 @@ class Hitbox
 		 * Computes the union rectangle of rects.
 		 */
 		SDL_Rect unionRect(void) const;
+
+		/**
+		 * Moves the hitbox to be centered around new coordinates.
+		 */
+		void offset(int x, int y);
+
+		/**
+		 * Renders the hitbox on screen.
+		 */
+		void render(void) const;
 
 		/**
 		 * Gets the hitboxes rectangle vector.

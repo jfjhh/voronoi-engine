@@ -7,8 +7,8 @@ bool Circle_HasIntersection(const Circle *a, const Circle *b)
 	int dy = a->y - b->y;
 	int dd = dx*dx + dy*dy;
 
-	/* Squared sum of radii. */
-	int d  = 2 * (a->r + b->r);
+	/* Sum of radii. */
+	int d  = a->r + b->r;
 
 	return (dd < d*d);
 }

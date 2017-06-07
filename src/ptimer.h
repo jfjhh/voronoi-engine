@@ -27,21 +27,21 @@ class PTimer
 		/**
 		 * Timer actions.
 		 */
-		void start(void);
-		void stop(void);
-		void pause(void);
-		void unpause(void);
+		virtual void start(void);
+		virtual void stop(void);
+		virtual void pause(void);
+		virtual void unpause(void);
 
 		/**
 		 * Get the timer's time.
 		 */
-		Uint32 getTicks(void) const;
+		virtual Uint32 getTicks(void) const;
 
 		/**
 		 * Get the timer's status;
 		 */
-		bool isStarted(void) const;
-		bool isPaused(void) const;
+		virtual bool isStarted(void) const;
+		virtual bool isPaused(void) const;
 };
 
 #endif /* PTIMER_H */

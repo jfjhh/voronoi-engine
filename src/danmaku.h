@@ -6,20 +6,22 @@
 #ifndef DANMAKU_H
 #define DANMAKU_H
 
+#include <functional>
+#include <memory>
 #include <vector>
 #include "pobject.h"
 
 class Danmaku : public PObject
 {
 	private:
-		std::vector<PObject> objects;
+		std::vector<std::shared_ptr<PObject>> objects;
 
 	public:
 		/**
-		 * Initializes the danmaku.
+		 * A danmaku can be constructed just like an object.
 		 */
-		Danmaku();
-		
+		using PObject::PObject;
+
 		/**
 		 * Destroys the danmaku.
 		 */
@@ -33,22 +35,41 @@ class Danmaku : public PObject
 		/**
 		 * Adds an object to the danmaku.
 		 */
-		void addPObject(PObject &o);
+		void addPObject(std::shared_ptr<PObject> d);
 
 		/**
 		 * Updates the danmaku's objects.
 		 */
-		virtual void update(float time) override;
+		virtual void update(void) override;
 
 		/**
 		 * Renders the danmaku's objects.
 		 */
-		virtual void render(float time) override;
+		virtual void render(double xoff = 0, double yoff = 0) const override;
+
+		/**
+		 * Offsets an object's position.
+		 */
+		virtual void offset(double dx, double dy);
+
+		/**
+		 * Maps a function over a danmaku's objects.
+		 */
+		void map(std::function<void(std::shared_ptr<PObject>,
+					std::shared_ptr<Danmaku>, size_t)> f);
 
 		/**
 		 * Gets the union hitbox of the danmaku's hitboxes.
 		 */
 		virtual Hitbox getHitbox(void) const override;
+
+		/**
+		 * Timer actions.
+		 */
+		void start(void) override;
+		void stop(void) override;
+		void pause(void) override;
+		void unpause(void) override;
 };
 
 #endif /* DANMAKU_H */
