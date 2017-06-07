@@ -6,9 +6,7 @@
 #include "pob.h"
 #include "ptexture.h"
 #include "ptimer.h"
-#include "player.h"
-#include "danmaku.h"
-#include "bullet.h"
+#include "stage.h"
 
 /**
  * Screen dimensions.
@@ -36,6 +34,11 @@ TTF_Font     *gFont;        /**< The default font.                   */
 PTexture      gBgTexture;   /**< The background texture.             */
 PTexture      gTextTexture; /**< A texture used for displaying text. */
 PTexture      gFPSTexture;  /**< A texture used for displaying text. */
+
+/**
+ * Global stage variables.
+ */
+std::vector<Stage> gStages; /**< The vector of all stages. */
 
 /**
  * Starts SDL and creates the window.
@@ -115,6 +118,11 @@ bool init(void)
  */
 void quit(int status)
 {
+	/* Free stages. */
+	for (size_t i = 0; i < gStages.size(); i++) {
+		gStages[i].free();
+	}
+
 	/* Free surfaces. */
 	SDL_FreeSurface(gImage);
 	gImage = NULL;
@@ -124,7 +132,8 @@ void quit(int status)
 	gTextTexture.free();
 	gFPSTexture.free();
 	for (size_t i = 0; i < BULLETS_LENGTH; i++) {
-		BULLETS[i].texture.free();
+		BULLETS[i].texture->free();
+		BULLETS[i].texture.reset();
 	}
 
 	/* Destroy renderer. */
@@ -207,7 +216,7 @@ bool load_media(void)
 	/* Load the bullet textures. */
 	for (size_t i = 0; i < BULLETS_LENGTH; i++) {
 		if (strlen(BULLETS[i].sprite_file) > 0) {
-			BULLETS[i].texture.load(BULLETS[i].sprite_file, {255, 0, 0, 255});
+			BULLETS[i].texture->load(BULLETS[i].sprite_file, {255, 0, 0, 255});
 		}
 	}
 
@@ -265,13 +274,17 @@ int main(int argc, const char **argv)
 	/* h.add(c); */
 	/* d->setHitbox(h); */
 
+	/**
+	 * Add the danmaku to a stage.
+	 */
+	Stage s1;
+	s1.addPObject(d);
+	gStages.push_back(s1);
+
 	Player player("player_sprites.png");
 	player.sprite.setSID(Player::Sprite::CENTER);
 	player.sprite.setColor(255, 0, 255);
 	player.setPosition(SCREEN_WIDTH / 2, 4 * SCREEN_HEIGHT / 5);
-	fprintf(stderr, "\tPlayer hitbox count: (%d, %d)\n",
-			(int) player.getHitbox().getRects().size(),
-			(int) player.getHitbox().getCircles().size());
 	std::stringstream timeText;
 
 	fpsTimer.start();
@@ -364,7 +377,8 @@ int main(int argc, const char **argv)
 		}
 
 		/* Update the danmaku. */
-		d->update();
+		std::for_each(gStages.begin(), gStages.end(),
+				[](Stage& s){ s.update(); });
 
 		/* Move the player. */
 		player.move(timeStep);
@@ -377,7 +391,9 @@ int main(int argc, const char **argv)
 				(int) (ph.getCircles().size() + dh.getCircles().size()));
 
 		if (player.getHitbox().intersects(dh)) {
-			fputs("Intersection! ", stderr);
+			fputs("Hit!", stderr);
+		} else {
+			fputs("    ", stderr);
 		}
 
 		/* Clear the screen. */
@@ -401,7 +417,8 @@ int main(int argc, const char **argv)
 		player.render();
 
 		/* Draw the danmaku. */
-		d->render();
+		std::for_each(gStages.begin(), gStages.end(),
+				[](Stage& s){ s.render(); });
 
 		/* Draw text. */
 		gTextTexture.render(SCREEN_WIDTH / 2, 36);

@@ -19,16 +19,19 @@ BulletData BULLETS[] = {
 		BulletType::NONE,
 		"",
 		Hitbox(NONE_RECTS, NONE_CIRCLES),
+		std::make_shared<PTexture>(),
 	},
 	{
 		BulletType::CIRCLE,
 		"circle.png",
 		Hitbox(CIRCLE_RECTS, CIRCLE_CIRCLES),
+		std::make_shared<PTexture>(),
 	},
 	{
 		BulletType::RECT,
 		"rect.png",
 		Hitbox(RECT_RECTS, RECT_CIRCLES),
+		std::make_shared<PTexture>(),
 	},
 };
 

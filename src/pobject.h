@@ -7,6 +7,7 @@
 #define POBJECT_H
 
 #include <math.h>
+#include <memory>
 #include <vector>
 #include "pob.h"
 #include "ptexture.h"
@@ -68,7 +69,7 @@ class PObject : public PTimer
 			aamax(aamax),
 			die(die),
 			ttl(ttl),
-			texture(NO_TEXTURE) {}
+			texture(nullptr) {}
 
 		/**
 		 * Destroys the object.
@@ -128,14 +129,15 @@ class PObject : public PTimer
 		/**
 		 * A default empty texture.
 		 */
-		static const PTexture NO_TEXTURE;
+		/* static PTexture NO_TEXTURE; */
 
 	protected:
 		/**
 		 * Game display and logic variables.
 		 */
-		Hitbox   hitbox;  /**< The object's hitbox(es).                     */
-		PTexture texture; /**< The object's texture, if applicable.         */
+		Hitbox                    hitbox;  /**< The object's hitbox(es).  */
+		std::shared_ptr<PTexture> texture; /**< A pointer to the texture. */
+		/* PTexture &texture; */
 
 		/**
 		 * Internal timer.

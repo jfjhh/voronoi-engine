@@ -6,6 +6,7 @@
 #ifndef HITBOX_H
 #define HITBOX_H
 
+#include <algorithm>
 #include <vector>
 
 #include "pob.h"

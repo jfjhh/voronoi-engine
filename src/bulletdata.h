@@ -6,6 +6,7 @@
 #ifndef BULLETDATA_H
 #define BULLETDATA_H
 
+#include <memory>
 #include "ptexture.h"
 #include "hitbox.h"
 
@@ -29,7 +30,7 @@ typedef struct bullet_data_t {
 	BulletType type;
 	char       sprite_file[SPRITE_FILE_MAX];
 	Hitbox     hitbox;
-	PTexture   texture;
+	std::shared_ptr<PTexture> texture;
 } BulletData;
 
 extern BulletData BULLETS[];

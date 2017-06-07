@@ -1,7 +1,5 @@
 #include "pobject.h"
 
-const PTexture PObject::NO_TEXTURE;
-
 PObject::~PObject()
 {
 	free();
@@ -10,7 +8,7 @@ PObject::~PObject()
 void PObject::free(void)
 {
 	/* Not needed because the texture is a reference. */
-	/* texture.free(); */
+	/* texture->free(); */
 }
 
 void PObject::update(void)
