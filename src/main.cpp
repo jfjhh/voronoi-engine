@@ -17,7 +17,8 @@ int SCREEN_HEIGHT = 720;
 /**
  * Timing variables.
  */
-int    SCREEN_FPS   = 120;
+int    SCREEN_FPS   = 60;
+int    GFX_FPS      = SCREEN_FPS;
 double SCREEN_TICKS = 1e3 / SCREEN_FPS;
 
 /**
@@ -34,6 +35,7 @@ TTF_Font     *gFont;        /**< The default font.                   */
 PTexture      gBgTexture;   /**< The background texture.             */
 PTexture      gTextTexture; /**< A texture used for displaying text. */
 PTexture      gFPSTexture;  /**< A texture used for displaying text. */
+FPSmanager    gFPSManager;  /**< The framerate manager.              */
 
 /**
  * Global stage variables.
@@ -58,6 +60,10 @@ bool init(void)
 		return false;
 	}
 
+	/* Setup the GFX FPS manager. */
+	SDL_initFramerate(&gFPSManager);
+	SDL_setFramerate(&gFPSManager, GFX_FPS);
+
 	/* Create the window. */
 	uint32_t window_flags =
 		SDL_WINDOW_SHOWN |
@@ -75,11 +81,8 @@ bool init(void)
 	}
 
 	/* Create the renderer for the window. */
-#ifdef VSYNC
+	/* int renderer_flags = 0; */
 	int renderer_flags = SDL_RENDERER_PRESENTVSYNC;
-#else
-	int renderer_flags = 0;
-#endif /* VSYNC */
 	gRenderer = SDL_CreateRenderer(gWindow, -1, renderer_flags | SDL_RENDERER_ACCELERATED);
 	if (!gRenderer) {
 		gRenderer = SDL_CreateRenderer(gWindow, -1, renderer_flags | SDL_RENDERER_SOFTWARE);
@@ -183,13 +186,6 @@ SDL_Texture *load_texture(std::string filename)
  */
 bool load_media(void)
 {
-#ifdef VSYNC
-	bool vsync = true;
-#else
-	bool vsync = false;
-#endif /* VSYNC */
-	fprintf(stderr, "\tVSYNC STATUS\t: %s\n", vsync ? "On" : "Off; FPS cap");
-
 	fprintf(stderr, "\tMEDIA_PATH\t: '%s'\n", MEDIA_PATH);
 
 	/* Load the background texture. */
@@ -243,7 +239,6 @@ int main(int argc, const char **argv)
 	PTimer    fpsTimer;
 	PTimer    stepTimer;
 	SDL_Color textColor     = { 255, 0, 255 };
-	int       countedFrames = 0;
 	double    angle         = 0.0;
 	bool      user_quit     = false;
 
@@ -252,7 +247,8 @@ int main(int argc, const char **argv)
 	auto d = std::make_shared<Danmaku>(
 			xd, yd,
 			M_PI / 4,
-			83, 1,
+			/* 83, 1, */
+			830, 10,
 			0,  0,
 			true);
 
@@ -288,11 +284,12 @@ int main(int argc, const char **argv)
 	std::stringstream timeText;
 
 	fpsTimer.start();
+	int countedFrames = 0;
 	while (!user_quit) {
 		/* Calculate real time step. */
 		double timeStep = stepTimer.getTicks() / 1e3;
 		stepTimer.start();
-		d->start();
+		s1.start();
 
 		/* Calclulate FPS. */
 		double meanFPS = countedFrames / (fpsTimer.getTicks() / 1e3);
@@ -303,7 +300,7 @@ int main(int argc, const char **argv)
 		/* Render FPS texture. */
 		timeText.str("");
 		timeText << "FPS: " << meanFPS;
-		if (!gFPSTexture.load_text(timeText.str().c_str(), textColor)) {
+		if (!gFPSTexture.load_text(timeText.str().substr(0, 10).c_str(), textColor)) {
 			fputs("Could not render FPS texture!\n", stderr);
 		}
 
@@ -391,9 +388,9 @@ int main(int argc, const char **argv)
 				(int) (ph.getCircles().size() + dh.getCircles().size()));
 
 		if (player.getHitbox().intersects(dh)) {
-			fputs("Hit!", stderr);
+			fputs("\tHit!", stderr);
 		} else {
-			fputs("    ", stderr);
+			fputs("\t    ", stderr);
 		}
 
 		/* Clear the screen. */
@@ -441,13 +438,12 @@ int main(int argc, const char **argv)
 		SDL_RenderPresent(gRenderer);
 		countedFrames++;
 
-#ifndef VSYNC
-		/* Wait if the frame finished early. */
-		double frameTicks = stepTimer.getTicks();
-		if (frameTicks < 1e3 / SCREEN_TICKS) {
-			SDL_Delay(SCREEN_TICKS - frameTicks);
-		}
-#endif /* VSYNC */
+		/* Manually time without using VSYNC. */
+		/* double frameTicks = stepTimer.getTicks(); */
+		/* if (frameTicks < 1e3 / SCREEN_TICKS) { */
+		/* 	fprintf(stderr, "\n%g\n", frameTicks); */
+		/* 	SDL_Delay(SCREEN_TICKS - frameTicks); */
+		/* } */
 	}
 
 	quit(EXIT_SUCCESS);

@@ -18,14 +18,6 @@
 #define VERSION	"v0.0.0"
 #endif /* VERSION */
 
-#ifdef NVSYNC
-#ifndef VSYNC
-#undef VSYNC
-#endif /* VSYNC */
-#else
-#define VSYNC
-#endif /* NVSYNC */
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <memory>
@@ -35,6 +27,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL2_framerate.h>
+#include <SDL2/SDL2_gfxPrimitives.h>
 
 /**
  * Screen dimensions.

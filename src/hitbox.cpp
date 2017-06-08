@@ -114,16 +114,20 @@ void Hitbox::render(void) const
 {
 	/* Draw rectangles. */
 	for (size_t i = 0; i < rects.size(); i++) {
-		SDL_RenderDrawRect(gRenderer, &rects[i]);
+		int x = rects[i].x;
+		int y = rects[i].y;
+		int w = rects[i].w;
+		int h = rects[i].h;
+		rectangleRGBA(gRenderer,
+				x, y, x + w, y + h,
+				0, 0, 255, 255);
 	}
 
 	/* Draw circles, pixel by pixel. */
 	for (size_t i = 0; i < circles.size(); i++) {
-		for (float t = 0; t < 2 * M_PI; t += 1.0 / circles[i].r) {
-			int cx = circles[i].x + (circles[i].r * cos(t));
-			int cy = circles[i].y + (circles[i].r * sin(t));
-			SDL_RenderDrawPoint(gRenderer, cx, cy);
-		}
+		circleRGBA(gRenderer,
+				circles[i].x, circles[i].y, circles[i].r,
+				0, 0, 255, 255);
 	}
 }
 

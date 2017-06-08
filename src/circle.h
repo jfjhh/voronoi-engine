@@ -8,9 +8,12 @@
 
 #include "pob.h"
 
-typedef struct circle_t {
-	int x, y, r;
-} Circle;
+struct Circle
+{
+	int x;
+	int y;
+	int r;
+};
 
 /**
  * Check if a circle intersects with another shape.

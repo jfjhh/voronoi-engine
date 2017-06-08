@@ -7,6 +7,7 @@
 #define HITBOX_H
 
 #include <algorithm>
+#include <memory>
 #include <vector>
 
 #include "pob.h"

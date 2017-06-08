@@ -24,7 +24,7 @@ SDLCONFIG  = sdl2-config
 MACROS     = -DMEDIA_PATH=\"$(MEDIA_PATH)\" -DVERSION=\"$(VERSION)\"
 CXXFLAGS   = -g -Wall -Werror -O2 -std=c++11 $(MACROS)
 CPPFLAGS  := $(shell $(SDLCONFIG) --cflags)
-EXTLIBS   := -lSDL2_image -lSDL2_ttf -lSDL2_mixer
+EXTLIBS   := -lSDL2_image -lSDL2_ttf -lSDL2_gfx #-lSDL2_mixer
 LIBS      := $(shell $(SDLCONFIG) --libs) $(EXTLIBS)
 
 # pkg-config Configuration.
