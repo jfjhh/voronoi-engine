@@ -129,7 +129,7 @@ class PObject : public PTimer
 		/**
 		 * A default empty texture.
 		 */
-		/* static PTexture NO_TEXTURE; */
+		// static PTexture NO_TEXTURE;
 
 	protected:
 		/**
@@ -137,7 +137,7 @@ class PObject : public PTimer
 		 */
 		Hitbox                    hitbox;  /**< The object's hitbox(es).  */
 		std::shared_ptr<PTexture> texture; /**< A pointer to the texture. */
-		/* PTexture &texture; */
+		// PTexture &texture;
 
 		/**
 		 * Internal timer.

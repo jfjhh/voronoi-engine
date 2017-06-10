@@ -2,47 +2,79 @@
 
 void UnionShape::add(ShapePointer t)
 {
-	ConvexHull  c = t->getVertices();
-	VoronoiHull v = t->getVoronoiVertices();
+	auto c = t->vertices();
+	auto v = t->voronoiVertices();
 	chull.insert(chull.end(), c.begin(), c.end());
 	vhull.insert(vhull.end(), v.begin(), v.end());
 	shapes.push_back(t);
 
-	double xc = 0;
-	double yc = 0;
-	std::for_each(shapes.begin(), shapes.end(),
-			[&xc](ShapePointer u) { xc += u->getCenterX(); });
-	std::for_each(shapes.begin(), shapes.end(),
-			[&yc](ShapePointer u) { yc += u->getCenterY(); });
+	auto xc = 0.0;
+	auto yc = 0.0;
+	for (const auto& s: shapes) {
+		auto c = s->vcenter();
+		xc += c.x;
+		yc += c.y;
+	}
+	auto vc = VoronoiVertex{xc, yc};
 
-	VoronoiVertex vc(xc, yc);
-	std::vector<double> distances;
-	std::transform(shapes.begin(), shapes.end(), distances.begin(),
-			[&vc](ShapePointer u) { return vc.distanceTo(u->getCenter()); });
-	auto it = std::max_element(distances.begin(), distances.end());
-	vc.r = (*it) + shapes[it - distances.begin()]->getVoronoiRadius();
+	auto max_distance = 0.0;
+	auto i = shapes.begin();
+	for (auto it = i; it < shapes.end(); it++) {
+		auto d = vc.distanceTo((*it)->vcenter());
+		if (d > max_distance) {
+			max_distance = d;
+			i = it;
+		}
+	}
+	vc.r = max_distance + (*i)->vcenter().r;
+}
+
+void UnionShape::render(void) const
+{
+	for (const auto& s: shapes) {
+		s->render();
+	}
 }
 
 void UnionShape::offset(double x, double y)
 {
-	std::for_each(shapes.begin(), shapes.end(),
-			[x, y](ShapePointer u) { u->offset(x, y); });
+	for (const auto& s: shapes) {
+		s->offset(x, y);
+	}
 	center.offset(x, y);
 }
 
-bool UnionShape::intersects(ShapePointer t) const
+bool UnionShape::intersects(const Shape& t) const
 {
-	for (size_t i = 0; i < shapes.size(); i++) {
-		if (t->intersects(shapes[i])) {
+	for (const auto& s: shapes) {
+		if (t.intersects(*s)) {
 			return true;
 		}
 	}
 	return false;
 }
 
-void UnionShape::render(void) const
+Range UnionShape::project(coord on) const
 {
-	std::for_each(shapes.begin(), shapes.end(),
-			[](ShapePointer u) { u->render(); });
+	auto r = inverse_range;
+
+	for (const auto& s: shapes) {
+		r.update(s->project(on));
+	}
+
+	return r;
+}
+
+void UnionShape::setAngle(double to)
+{
+	for (const auto& s: shapes) {
+		s->setAngle(to);
+	}
+	Shape::setAngle(to);
+}
+
+ShapeUnion UnionShape::shapePointers(void) const
+{
+	return shapes;
 }
 

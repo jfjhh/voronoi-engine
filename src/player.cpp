@@ -5,9 +5,9 @@ Player::~Player()
 	sprite.free();
 }
 
-void Player::handleEvent(SDL_Event &e)
+void Player::handleEvent(const SDL_Event &e)
 {
-	/* Update key states. */
+	// Update key states.
     if (e.type == SDL_KEYDOWN && e.key.repeat == 0) {
         switch (e.key.keysym.sym) {
             case SDLK_UP:
@@ -62,7 +62,7 @@ void Player::handleEvent(SDL_Event &e)
 
 	int velocity = focused ? VELOCITY / FVELOCITY : VELOCITY;
 
-	/* Set the x velocity. */
+	// Set the x velocity.
 	if (xmotion == 0) {
 		vx = 0;
 	} else {
@@ -73,7 +73,7 @@ void Player::handleEvent(SDL_Event &e)
 		}
 	}
 
-	/* Set the y velocity. */
+	// Set the y velocity.
 	if (ymotion == 0) {
 		vy = 0;
 	} else {
@@ -84,7 +84,7 @@ void Player::handleEvent(SDL_Event &e)
 		}
 	}
 
-	/* Set player sprite based on direction of motion. */
+	// Set player sprite based on direction of motion.
 	int s;
 	if (vx < 0) {
 		s = Player::Sprite::LEFT;
@@ -94,13 +94,13 @@ void Player::handleEvent(SDL_Event &e)
 		s = Player::Sprite::CENTER;
 	}
 
-	sprite.setSID(focused ? s + Player::Sprite::FOCUS : s);
+	sprite.setSprite(focused ? s + Player::Sprite::FOCUS : s);
 }
 
 void Player::move(double time)
 {
-	double hw = sprite.getSWidth()  / 2;
-	double hh = sprite.getSHeight() / 2;
+	double hw = sprite.swidth()  / 2;
+	double hh = sprite.sheight() / 2;
 
 	x += vx * time;
 	x = std::max(std::min(x, SCREEN_WIDTH - hw), hw);
@@ -113,7 +113,7 @@ void Player::render(void) const
 {
 	SDL_SetRenderDrawColor(gRenderer, 0x00, 0xff, 0x00, 0xff);
 	sprite.render(x, y);
-	getHitbox().render();
+	hbox.render();
 }
 
 double Player::angleFrom(double xf, double yf) const
@@ -121,12 +121,10 @@ double Player::angleFrom(double xf, double yf) const
 	return atan2(y - yf, x - xf);
 }
 
-Hitbox Player::getHitbox(void) const
+Hitbox Player::hitbox(void) const
 {
-	Hitbox h = hitbox;
-
+	Hitbox h = hbox;
 	h.offset(x, y);
-
 	return h;
 }
 
@@ -142,8 +140,8 @@ double Player::getY(void) const
 
 void Player::setPosition(double px, double py)
 {
-	double hw = sprite.getSWidth()  / 2;
-	double hh = sprite.getSHeight() / 2;
+	double hw = sprite.swidth()  / 2;
+	double hh = sprite.sheight() / 2;
 
 	x = std::min(std::max(hw, px), SCREEN_WIDTH  - hw);
 	y = std::min(std::max(hh, py), SCREEN_HEIGHT - hh);

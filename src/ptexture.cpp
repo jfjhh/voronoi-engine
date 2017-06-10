@@ -7,21 +7,20 @@ PTexture::~PTexture()
 
 void PTexture::free(void)
 {
-	/* Free the texture if it exists. */
+	// Free the texture if it exists.
 	if (texture) {
 		SDL_DestroyTexture(texture);
 		texture = NULL;
-		pixels  = NULL;
-		width   = 0;
-		height  = 0;
-		swidth  = 0;
-		sheight = 0;
+		w  = 0;
+		h  = 0;
+		sw = 0;
+		sh = 0;
 	}
 }
 
-bool PTexture::load(std::string filename, SDL_Color color)
+bool PTexture::load(const std::string& filename, SDL_Color color)
 {
-	/* Remove preexisting texture just in case. */
+	// Remove preexisting texture just in case.
 	free();
 
 	std::string path        = std::string(MEDIA_PATH) + filename;
@@ -31,16 +30,16 @@ bool PTexture::load(std::string filename, SDL_Color color)
 		fprintf(stderr, "Image surface '%s' could not be loaded! IMG Error: %s\n",
 				path.c_str(), IMG_GetError());
 	} else {
-		width   = loaded->w;
-		height  = loaded->h;
-		swidth  = width;
-		sheight = height;
+		w   = loaded->w;
+		h  = loaded->h;
+		sw  = w;
+		sh = h;
 
 		if (color.a != 0) {
 			const SDL_PixelFormat *format = loaded->format;
 			void *pixels = loaded->pixels;
 
-			for (Uint32 i = 0; i < (Uint32) (width * height); i++) {
+			for (Uint32 i = 0; i < (Uint32) (w * h); i++) {
 				Uint32 *pixel = (Uint32 *) pixels + i;
 				Uint8 r = *pixel + color.r - (*pixel * color.r) / 255;
 				Uint8 g = *pixel + color.g - (*pixel * color.g) / 255;
@@ -62,89 +61,18 @@ bool PTexture::load(std::string filename, SDL_Color color)
 	return (texture != NULL);
 }
 
-/* bool PTexture::load(std::string filename) */
-/* { */
-/* 	/1* Remove preexisting texture just in case. *1/ */
-/* 	free(); */
-
-/* 	std::string path        = std::string(MEDIA_PATH) + filename; */
-/* 	SDL_Texture *tmptexture = NULL; /1* The final loaded texture. *1/ */
-/* 	SDL_Surface *loaded     = IMG_Load(path.c_str()); */
-/* 	if (!loaded) { */
-/* 		fprintf(stderr, "Image surface '%s' could not be loaded! IMG Error: %s\n", */
-/* 				path.c_str(), IMG_GetError()); */
-/* 	} else { */
-/* 		fprintf(stderr, "\tDEBUG\t\t: ALIVE!\t%p\t%p\n", gWindow, loaded); */
-
-/* 		/1* Try to get the window's surface. *1/ */
-/* 		SDL_Surface *formatted; */
-/* 		SDL_Surface *win_surface = SDL_GetWindowSurface(gWindow); */
-/* 		if (!win_surface) { */
-/* 			fprintf(stderr, "Could not get the window's surface! SDL Error: %s\n", */
-/* 					SDL_GetError()); */
-
-/* 			/1* Try anywway with an unconverted surface. *1/ */
-/* 			/1* formatted = loaded; *1/ */
-/* 			formatted = SDL_ConvertSurfaceFormat(loaded, SDL_PIXELFORMAT_RGBA8888, 0); */
-/* 		} else { */
-/* 			/1* Convert loaded surface to display format. *1/ */
-/* 			formatted = SDL_ConvertSurface(loaded, */
-/* 					SDL_GetWindowSurface(gWindow)->format, 0); */
-/* 		} */
-
-/* 		if (!formatted) { */
-/* 			fprintf(stderr, "Could not convert loaded surface to display format! SDL Error: %s\n", */
-/* 					SDL_GetError()); */
-/* 		} else { */
-/* 			/1* tmptexture = SDL_CreateTexture(gRenderer, *1/ */
-/* 			/1* 		SDL_GetWindowPixelFormat(gWindow), *1/ */
-/* 			/1* 		SDL_TEXTUREACCESS_STREAMING, formatted->w, formatted->h); *1/ */
-/* 			tmptexture = SDL_CreateTexture(gRenderer, */
-/* 					SDL_PIXELFORMAT_RGBA8888, */
-/* 					SDL_TEXTUREACCESS_STREAMING, formatted->w, formatted->h); */
-
-/* 			if (!tmptexture) { */
-/* 				fprintf(stderr, "Unable to create blank streamable texture! SDL Error: %s\n", */
-/* 						SDL_GetError()); */
-/* 			} else { */
-/* 				/1* Lock texture for manipulation. *1/ */
-/* 				SDL_LockTexture(tmptexture, NULL, &pixels, &pitch); */
-
-/* 				/1* Copy the formatted pixels that were loaded before. *1/ */
-/* 				memcpy(pixels, formatted->pixels, formatted->pitch * formatted->h); */
-
-/* 				/1* Unlock texture to update. *1/ */
-/* 				SDL_UnlockTexture(tmptexture); */
-
-/* 				pixels  = NULL; */
-/* 				width   = formatted->w; */
-/* 				height  = formatted->h; */
-/* 				swidth  = width; */
-/* 				sheight = height; */
-/* 			} */
-
-/* 			if (formatted != loaded) { */
-/* 				SDL_FreeSurface(formatted); */
-/* 			} */
-/* 		} */
-/* 		SDL_FreeSurface(loaded); */
-/* 	} */
-
-/* 	texture = tmptexture; */
-/* 	return (texture != NULL); */
-/* } */
-
-bool PTexture::load_text(std::string text, SDL_Color color)
+bool PTexture::load_text(const std::string& text, SDL_Color color)
 {
 	return load_text(text, color, gFont);
 }
 
-bool PTexture::load_text(std::string text, SDL_Color color, TTF_Font *font)
+bool PTexture::load_text(
+		const std::string& text, SDL_Color color, TTF_Font *font)
 {
-	/* Remove preexisting texture just in case. */
+	// Remove preexisting texture just in case.
 	free();
 	
-	/* Render text surface. */
+	// Render text surface.
 	SDL_Surface *text_surface = TTF_RenderText_Solid(font, text.c_str(), color);
 	if (!text_surface) {
 		fprintf(stderr, "Could not render text surface! TTF Error: %s\n",
@@ -157,10 +85,10 @@ bool PTexture::load_text(std::string text, SDL_Color color, TTF_Font *font)
 				SDL_GetError());
 	}
 
-	width   = text_surface->w;
-	height  = text_surface->h;
-	swidth  = width;
-	sheight = height;
+	w   = text_surface->w;
+	h  = text_surface->h;
+	sw  = w;
+	sh = h;
 	SDL_FreeSurface(text_surface);
 
 	return (texture != NULL);
@@ -168,45 +96,45 @@ bool PTexture::load_text(std::string text, SDL_Color color, TTF_Font *font)
 
 void PTexture::setColor(Uint8 red, Uint8 green, Uint8 blue)
 {
-	/* Modulate the color of the texture. */
+	// Modulate the color of the texture.
 	SDL_SetTextureColorMod(texture, red, green, blue);
 }
 
 void PTexture::setBlendMode(SDL_BlendMode blending)
 {
-	/* Set blending function. */
+	// Set blending function.
 	SDL_SetTextureBlendMode(texture, blending);
 }
 
 void PTexture::setAlpha(Uint8 alpha)
 {
-	/* Modulate the texture's alpha channel. */
+	// Modulate the texture's alpha channel.
 	SDL_SetTextureAlphaMod(texture, alpha);
 }
 
-void PTexture::setSGrid(int w, int h)
+void PTexture::setGrid(int w, int h)
 {
-	if (0 >= w || w > width || 0 >= h || h > height) {
-		swidth  = width;
-		sheight = height;
+	if (0 >= w || w > w || 0 >= h || h > h) {
+		sw  = w;
+		sh = h;
 	} else {
-		swidth  = w;
-		sheight = h;
+		sw  = w;
+		sh = h;
 	}
 }
 
-void PTexture::setSID(int id)
+void PTexture::setSprite(int id)
 {
-	if (0 >= id || id > (width / swidth) * (height / sheight)) {
+	if (0 >= id || id > (w / sw) * (h / sh)) {
 		sid        = 0;
-		sbox       = {0, 0, getWidth(), getHeight()};
+		sbox       = {0, 0, w, h};
 		sprite_box = NULL;
 	} else {
-		int cols   = width / swidth;
+		int cols   = w / sw;
 		sid        = id;
 		sbox       = {
-			swidth * ((sid - 1) % cols), sheight * ((sid - 1) / cols),
-			swidth,                      sheight
+			sw * ((sid - 1) % cols), sh * ((sid - 1) / cols),
+			sw,                      sh
 		};
 		sprite_box = &sbox;
 	}
@@ -214,7 +142,7 @@ void PTexture::setSID(int id)
 
 void PTexture::render(int x, int y) const
 {
-	render(x, y, swidth, sheight);
+	render(x, y, sw, sh);
 }
 
 void PTexture::render(int x, int y, int w, int h) const
@@ -222,103 +150,80 @@ void PTexture::render(int x, int y, int w, int h) const
 	render(x, y, w, h, sprite_box);
 }
 
-void PTexture::render(int x, int y, int w, int h, SDL_Rect *clip) const
+void PTexture::render(
+		int x, int y, int w, int h,
+		const SDL_Rect *const clip) const
 {
 	render(x, y, w, h, clip, 0.0, NULL, SDL_FLIP_NONE);
 }
 
-void PTexture::render(int x, int y, SDL_Rect *clip,
-		double angle, SDL_Point *center, SDL_RendererFlip flip) const
+void PTexture::render(
+		int x, int y,
+		const SDL_Rect  *const clip,   double angle,
+		const SDL_Point *const center, SDL_RendererFlip flip) const
 {
-	render(x, y, width, height, clip, angle, center, flip);
+	render(x, y, w, h, clip, angle, center, flip);
 }
 
-void PTexture::render(int x, int y, int w, int h, SDL_Rect *clip,
-		double angle, SDL_Point *center, SDL_RendererFlip flip) const
+void PTexture::render(
+		int x, int y, int w, int h,
+		const SDL_Rect  *const clip,   double angle,
+		const SDL_Point *const center, SDL_RendererFlip flip) const
 {
-	/* Create the rendering SDL_Rect. */
+	// Create the rendering SDL_Rect.
 	SDL_Rect render_rect = {
 		x - (w / 2), y - (h / 2),
 		w,           h,
 	};
 
-	/* Clip the rect if specified. */
+	// Clip the rect if specified.
 	if (clip) {
 		render_rect.w = clip->w;
 		render_rect.h = clip->h;
 	}
 
-	/* Render the texture to the screen. */
+	// Render the texture to the screen.
 	SDL_RenderCopyEx(gRenderer, texture, clip, &render_rect,
 			angle, center, flip);
 }
 
-SDL_Rect PTexture::getRect(void) const
+int PTexture::width(void) const
 {
-	/**
-	 * Use -hw and -hh for the rectangle x and y, so that adding the x and y of
-	 * an object's center gives a box that has it's center at the object's
-	 * center.
-	 */
-	int hw = swidth  / 2;
-	int hh = sheight / 2;
-	SDL_Rect r = {
-		-hw,    -hh,
-		swidth, sheight,
-	};
-
-	return r;
+	return w;
 }
 
-Circle PTexture::getCircle(void) const
+int PTexture::height(void) const
 {
-	int hw = swidth  / 2;
-	int hh = sheight / 2;
-	Circle c = {
-		0, 0,
-		std::min(hw, hh),
-	};
-
-	return c;
+	return h;
 }
 
-int PTexture::getWidth(void) const
+int PTexture::swidth(void) const
 {
-	return width;
+	return sw;
 }
 
-int PTexture::getHeight(void) const
+int PTexture::sheight(void) const
 {
-	return height;
+	return sh;
 }
 
-int PTexture::getSWidth(void) const
+int PTexture::sprite(void) const
 {
-	return swidth;
+	return sid;
 }
 
-int PTexture::getSHeight(void) const
+SDL_Rect PTexture::rect(void) const
 {
-	return sheight;
+	return sbox;
 }
 
-bool PTexture::lockTexture()
+SDL_Rect *PTexture::sbox_ptr(void) const
 {
-	return false;
+	return sprite_box;
 }
 
-bool PTexture::unlockTexture()
+SDL_Texture *PTexture::texture_ptr(void) const
 {
-	return false;
-}
-
-void *PTexture::getPixels() const
-{
-	return NULL;
-}
-
-int PTexture::getPitch() const
-{
-	return 0;
+	return texture;
 }
 

@@ -13,46 +13,14 @@
 class Player
 {
 	protected:
-		/**
-		 * The offsets of the player's position.
-		 */
 		double x, y;
-
-		/**
-		 * The velocities of the player.
-		 */
-		int vx, vy;
-
-		/**
-		 * The focus state of the player.
-		 */
-		bool focused;
-
-		/**
-		 * Keys pressed for motion along an axis.
-		 */
-		int  xmotion, ymotion;
-		bool up_last, left_last, up, down, left, right;
-
-		/**
-		 * Player hitbox.
-		 */
-		Hitbox hitbox;
+		int    vx, vy;
+		bool   focused;
+		int    xmotion, ymotion;
+		bool   up_last, left_last, up, down, left, right;
+		Hitbox hbox;
 
 	public:
-		/**
-		 * The maximum velocity of the player.
-		 */
-		static const int VELOCITY = 500;
-
-		/**
-		 * The focused velocity divisor.
-		 */
-		static constexpr double FVELOCITY = 3;
-
-		/**
-		 * The sprite enum.
-		 */
 		enum Sprite : int {
 			FOCUS = 3,
 			ALL   = 0,
@@ -60,15 +28,12 @@ class Player
 			F_LEFT,  F_CENTER,  F_RIGHT,
 		};
 
-		/**
-		 * The player's sprite texture.
-		 */
+		static constexpr double VELOCITY  = 500;
+		static constexpr double FVELOCITY = 3; /**< Focused velocity divisor. */
+
 		PTexture sprite;
 
-		/**
-		 * Initializes the player.
-		 */
-		Player(std::string sprite_filename):
+		Player(const std::string& sprite_filename):
 			x(SCREEN_WIDTH  / 2),
 			y(SCREEN_HEIGHT / 2),
 			vx(0),
@@ -77,57 +42,41 @@ class Player
 			xmotion(0),
 			ymotion(0) {
 				sprite.load(sprite_filename);
-				sprite.setSGrid(32, 32);
-
+				sprite.setGrid(32, 32);
 				Circle hit_circle = {0, 0, 5};
-				hitbox.add(hit_circle);
+				hbox.add(hit_circle);
+			}
+		Player(std::string&& sprite_filename):
+			x(SCREEN_WIDTH  / 2),
+			y(SCREEN_HEIGHT / 2),
+			vx(0),
+			vy(0),
+			focused(false),
+			xmotion(0),
+			ymotion(0) {
+				sprite.load(std::move(sprite_filename));
+				sprite.setGrid(32, 32);
+				Circle hit_circle = {0, 0, 5};
+				hbox.add(hit_circle);
 			}
 
-		/**
-		 * Destroys the player.
-		 */
+		explicit Player(Player& p)    = delete;
+		Player& operator=(Player& p)  = delete;
+		explicit Player(Player&& p)   = default;
+		Player& operator=(Player&& p) = default;
+
 		~Player();
 
-		/**
-		 * Handles motion events.
-		 */
-		void handleEvent(SDL_Event &e);
-
-		/**
-		 * Moves the player.
-		 */
-		void move(double time);
-
-		/**
-		 * Renders the player.
-		 */
-		void render(void) const;
-
-		/**
-		 * Gets the angle from a position to the player.
-		 */
+		void   handleEvent(const SDL_Event &e);
+		void   move(double time);
+		void   render(void) const;
 		double angleFrom(double xf, double yf) const;
-
-		/**
-		 * Gets the player's hitbox.
-		 */
-		Hitbox getHitbox(void) const;
-
-		/**
-		 * Gets the player's x position.
-		 */
+		Hitbox hitbox(void) const;
 		double getX(void) const;
-
-		/**
-		 * Gets the player's y position.
-		 */
 		double getY(void) const;
-
-		/**
-		 * Sets the player's position.
-		 */
-		void setPosition(double px, double py);
+		void   setPosition(double px, double py);
 };
+POBT_VERIFY_MOVE(Player);
 
 #endif /* PLAYER_H */
 

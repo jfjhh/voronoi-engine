@@ -1,44 +1,58 @@
 #include "shape.h"
 
-void Shape::offset(double x, double y)
+void Shape::rotate(coord by)
 {
-	std::transform(chull.begin(), chull.end(), chull.begin(),
-			[x, y](VertexPointer v) {
-			return std::make_shared<Vertex>(v->x + x, v->y + y);
-			});
-	std::transform(vhull.begin(), vhull.end(), vhull.begin(),
-			[x, y](VoronoiVertexPointer v) {
-			return std::make_shared<VoronoiVertex>(v->x + x, v->y + y, v->r);
-			});
+	setAngle(t + by);
+}
+
+coord Shape::angle(void) const
+{
+	return t;
+}
+
+void Shape::offset(coord x, coord y)
+{
+	for (auto&& v: chull) {
+		v.offset(x, y);
+	}
+	for (auto&& v: vhull) {
+		v.offset(x, y);
+	}
 	center.offset(x, y);
 }
 
-VoronoiVertex Shape::getCenter(void) const
+void Shape::setAngle(coord to)
+{
+	t = to;
+}
+
+Range Shape::projectOn(coord axis) const
+{
+	return project(t - axis);
+}
+
+Range Shape::project(coord on) const
+{
+	auto r = inverse_range;
+
+	for (const auto& v: chull) {
+		r.update(v.distanceTo() * cos(on));
+	}
+
+	return r;
+}
+
+VoronoiVertex Shape::vcenter(void) const
 {
 	return center;
 }
 
-double Shape::getCenterX(void) const
-{
-	return center.x;
-}
-
-double Shape::getCenterY(void) const
-{
-	return center.y;
-}
-
-double Shape::getVoronoiRadius(void) const
-{
-	return center.r;
-}
-
-ConvexHull Shape::getVertices(void) const
+ConvexHull Shape::vertices(void) const
 {
 	return chull;
 }
 
-VoronoiHull Shape::getVoronoiVertices(void) const
+VoronoiHull Shape::voronoiVertices(void) const
 {
 	return vhull;
 }

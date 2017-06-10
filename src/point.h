@@ -10,17 +10,32 @@
 class Point : virtual public Shape
 {
 	public:
-		/**
-		 * Checks if the target shape intersects this one.
-		 */
-		bool intersects(ShapePointer t) const;
+		Point(coord x, coord y);
 
-		/**
-		 * Renders the shape on the screen.
-		 */
-		void render(void) const;
+		Point(const Point& p) = default;
+		Point& operator=(const Point& p) = default;
+
+		Point(Point&& p)
+		{
+			chull  = std::move(p.vertices());
+			vhull  = std::move(p.voronoiVertices());
+			center = p.vcenter();
+			t      = p.angle();
+		}
+		Point& operator=(Point&& p)
+		{
+			chull  = std::move(p.vertices());
+			vhull  = std::move(p.voronoiVertices());
+			center = p.vcenter();
+			t      = p.angle();
+			return *this;
+		}
+
+		bool intersects(const Shape& t) const final override;
+		bool intersects(const Point& t) const;
+		void render(void) const final override;
 };
+POBT_VERIFY(Point);
 
 #endif /* POINT_H */
-
 

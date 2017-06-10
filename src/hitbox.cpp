@@ -20,21 +20,21 @@ void Hitbox::add(const Hitbox h)
 
 bool Hitbox::intersects(Hitbox h) const
 {
-	/* Try the union rects first. */
+	// Try the union rects first.
 	SDL_Rect u = unionRect();
 	SDL_Rect t = h.unionRect();
 	if (!SDL_HasIntersection(&u, &t)) {
 		return false;
 	}
 
-	/* Compare all rects. */
+	// Compare all rects.
 	for (size_t i = 0; i < rects.size(); i++) {
 		if (h.intersects(rects[i])) {
 			return true;
 		}
 	}
 
-	/* Compare all circles. */
+	// Compare all circles.
 	for (size_t i = 0; i < circles.size(); i++) {
 		if (h.intersects(circles[i])) {
 			return true;
@@ -112,7 +112,7 @@ void Hitbox::offset(int x, int y)
 
 void Hitbox::render(void) const
 {
-	/* Draw rectangles. */
+	// Draw rectangles.
 	for (size_t i = 0; i < rects.size(); i++) {
 		int x = rects[i].x;
 		int y = rects[i].y;
@@ -123,7 +123,7 @@ void Hitbox::render(void) const
 				0, 0, 255, 255);
 	}
 
-	/* Draw circles, pixel by pixel. */
+	// Draw circles, pixel by pixel.
 	for (size_t i = 0; i < circles.size(); i++) {
 		circleRGBA(gRenderer,
 				circles[i].x, circles[i].y, circles[i].r,

@@ -5,42 +5,49 @@
 #ifndef UNIONSHAPE_H
 #define UNIONSHAPE_H
 
+#include "pobt.h"
 #include "shape.h"
 
-typedef std::vector<ShapePointer> ShapeUnion;
+using ShapeUnion = std::vector<ShapePointer>;
 
 class UnionShape : virtual public Shape
 {
 	protected:
-		/**
-		 * The shape union's center.
-		 */
 		ShapeUnion shapes;
 
 	public:
-		/**
-		 * Adds the shape to the union.
-		 */
+		UnionShape(const UnionShape& p) = default;
+		UnionShape& operator=(const UnionShape& p) = default;
+
+		UnionShape(UnionShape&& p)
+		{
+			shapes = std::move(p.shapePointers());
+			chull  = std::move(p.vertices());
+			vhull  = std::move(p.voronoiVertices());
+			center = p.vcenter();
+			t      = p.angle();
+		}
+		UnionShape& operator=(UnionShape&& p)
+		{
+			shapes = std::move(p.shapePointers());
+			chull  = std::move(p.vertices());
+			vhull  = std::move(p.voronoiVertices());
+			center = p.vcenter();
+			t      = p.angle();
+			return *this;
+		}
+
 		void add(ShapePointer t);
 
-		/**
-		 * Offsets the shape's position.
-		 *
-		 * Often used to translate a shape from the origin to somewhere in the
-		 * plane.
-		 */
-		void offset(double x, double y);
+		void render(void) const override;
+		void offset(double x, double y) final override;
+		bool intersects(const Shape& t) const override;
+		Range project(coord on = 0.0) const final override;
+		void setAngle(double to) final override;
 
-		/**
-		 * Checks if the target shape intersects this one.
-		 */
-		bool intersects(ShapePointer t) const;
-
-		/**
-		 * Renders the shape on the screen.
-		 */
-		void render(void) const = 0;
+		ShapeUnion shapePointers(void) const;
 };
+POBT_VERIFY(UnionShape);
 
 #endif /* UNIONSHAPE_H */
 

@@ -5,63 +5,42 @@
 #ifndef SHAPE_H
 #define SHAPE_H
 
-#include <memory>
 #include <algorithm>
 #include <vector>
 #include "vertex.h"
+#include "range.h"
 #include "pob.h"
 
-class Shape;
-typedef std::shared_ptr<Shape>            ShapePointer;
-typedef std::shared_ptr<Vertex>           VertexPointer;
-typedef std::shared_ptr<VoronoiVertex>    VoronoiVertexPointer;
-typedef std::vector<VertexPointer>        ConvexHull;
-typedef std::vector<VoronoiVertexPointer> VoronoiHull;
+using ConvexHull  = std::vector<Vertex>;
+using VoronoiHull = std::vector<VoronoiVertex>;
 
 class Shape
 {
 	protected:
-		/**
-		 * The shape's center.
-		 */
+		ConvexHull    chull;
+		VoronoiHull   vhull;
 		VoronoiVertex center;
-
-		/**
-		 * Vertex hulls.
-		 */
-		ConvexHull  chull;
-		VoronoiHull vhull;
+		coord t; /**< Angle of shape. */
 
 	public:
-		/**
-		 * Checks if the target shape intersects this one.
-		 */
-		virtual bool intersects(ShapePointer t) const = 0;
-
-		/**
-		 * Offsets the shape's position.
-		 *
-		 * Often used to translate a shape from the origin to somewhere in the
-		 * plane.
-		 */
-		virtual void offset(double x, double y);
-
-		/**
-		 * Renders the shape on the screen.
-		 */
+		virtual void offset(coord x, coord y);
+		virtual bool intersects(const Shape& t) const = 0;
 		virtual void render(void) const = 0;
 
-		/**
-		 * Getters.
-		 */
-		VoronoiVertex getCenter(void) const;
-		double getCenterX(void) const;
-		double getCenterY(void) const;
-		double getVoronoiRadius(void) const;
+		virtual void setAngle(coord to);
+		void rotate(coord by);
+		coord angle(void) const;
 
-		virtual ConvexHull  getVertices(void) const;
-		virtual VoronoiHull getVoronoiVertices(void) const;
+		virtual Range projectOn(coord axis = 0.0) const;
+		virtual Range project(coord on = 0.0) const;
+
+		VoronoiVertex vcenter(void) const;
+		virtual ConvexHull  vertices(void) const;
+		virtual VoronoiHull voronoiVertices(void) const;
 };
+POBT_VERIFY_BASIC(Shape);
+
+using ShapePointer = std::shared_ptr<Shape>;
 
 #endif /* SHAPE_H */
 

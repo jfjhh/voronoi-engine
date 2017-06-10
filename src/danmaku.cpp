@@ -32,7 +32,7 @@ void Danmaku::update(void)
 			{
 			SDL_Rect field = {
 			0,            0,
-			SCREEN_WIDTH, SCREEN_HEIGHT,
+			(int) SCREEN_WIDTH, (int) SCREEN_HEIGHT,
 			};
 			Hitbox f;
 			f.add(field);
@@ -43,20 +43,20 @@ void Danmaku::update(void)
 
 void Danmaku::render(double xoff, double yoff) const
 {
-	/* Render the danmaku's texture. */
+	// Render the danmaku's texture.
 	if (texture != nullptr) {
 		texture->render(
-				x + xoff - (texture->getSWidth()  / 2),
-				y + yoff - (texture->getSHeight() / 2));
+				x + xoff - (texture->swidth()  / 2),
+				y + yoff - (texture->sheight() / 2));
 	}
 
-	/* Render the danmaku's hitbox. */
+	// Render the danmaku's hitbox.
 	SDL_SetRenderDrawColor(gRenderer, 0x00, 0xff, 0xff, 0xff);
 	Hitbox h = hitbox;
 	h.offset(x + xoff, y + yoff);
 	h.render();
 
-	/* Render the danmaku's objects. */
+	// Render the danmaku's objects.
 	for (size_t i = 0; i < objects.size(); i++) {
 		objects[i]->render(x + xoff, y + yoff);
 	}

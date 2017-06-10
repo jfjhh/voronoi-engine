@@ -7,30 +7,30 @@ PObject::~PObject()
 
 void PObject::free(void)
 {
-	/* Not needed because the texture is a reference. */
-	/* texture->free(); */
+	// Not needed because the texture is a reference.
+	// texture->free();
 }
 
 void PObject::update(void)
 {
-	/* Get time. */
+	// Get time.
 	double time = getTime();
 
-	/* Update linear velocity. */
+	// Update linear velocity.
 	v += a  * time;
 	v  = std::max(std::min(v, vmax), -vmax);
 
-	/* Update angular velocity. */
+	// Update angular velocity.
 	w += aa * time;
 	w  = std::max(std::min(w, wmax), -wmax);
 
-	/* Update angle. */
+	// Update angle.
 	t += w * time;
 
-	/* Update x position. */
+	// Update x position.
 	x += v * cos(t) * time;
 
-	/* Update y position. */
+	// Update y position.
 	y += v * sin(t) * time;
 }
 
@@ -74,7 +74,7 @@ void PObject::unpause(void)
 
 double PObject::getTime(void) const
 {
-	return timer.getTicks() / 1e3;
+	return timer.ticks() / 1e3;
 }
 
 bool PObject::isStarted(void) const

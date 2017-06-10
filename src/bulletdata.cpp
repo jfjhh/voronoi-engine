@@ -13,25 +13,30 @@ static std::vector<SDL_Rect> RECT_RECTS = {
 };
 static std::vector<Circle> RECT_CIRCLES = NONE_CIRCLES;
 
-size_t     BULLETS_LENGTH = 3;
-BulletData BULLETS[] = {
-	{
-		BulletType::NONE,
-		"",
-		Hitbox(NONE_RECTS, NONE_CIRCLES),
-		std::make_shared<PTexture>(),
-	},
-	{
-		BulletType::CIRCLE,
-		"circle.png",
-		Hitbox(CIRCLE_RECTS, CIRCLE_CIRCLES),
-		std::make_shared<PTexture>(),
-	},
-	{
-		BulletType::RECT,
-		"rect.png",
-		Hitbox(RECT_RECTS, RECT_CIRCLES),
-		std::make_shared<PTexture>(),
-	},
+static BulletData none = {
+	BulletType::NONE,
+	"",
+	Hitbox(NONE_RECTS, NONE_CIRCLES),
+	std::make_shared<PTexture>(),
+};
+
+static BulletData circle = {
+	BulletType::CIRCLE,
+	"circle.png",
+	Hitbox(CIRCLE_RECTS, CIRCLE_CIRCLES),
+	std::make_shared<PTexture>(),
+};
+
+static BulletData rect = {
+	BulletType::RECT,
+	"rect.png",
+	Hitbox(RECT_RECTS, RECT_CIRCLES),
+	std::make_shared<PTexture>(),
+};
+
+std::array<BulletData, BULLET_DATA_MAX> BULLETS = {
+	none,
+	circle,
+	rect,
 };
 

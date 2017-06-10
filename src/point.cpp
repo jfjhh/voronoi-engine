@@ -1,12 +1,26 @@
 #include "point.h"
 
-bool Point::intersects(ShapePointer t) const
+Point::Point(coord x, coord y)
 {
-	return false;
+	t      = 0.0;
+	center = {x, y};
+	chull.push_back(center);
+	vhull.push_back(center);
+}
+
+bool Point::intersects(const Shape& t) const
+{
+	return t.intersects(*this);
+}
+
+bool Point::intersects(const Point& t) const
+{
+	auto v = t.vcenter();
+	return (center.x == v.x && center.y == v.y);
 }
 
 void Point::render(void) const
 {
-	pixelRGBA(gRenderer, getCenterX(), getCenterY(), 255, 0, 255, 255);
+	pixelRGBA(gRenderer, center.x, center.y, 255, 0, 255, 255);
 }
 
