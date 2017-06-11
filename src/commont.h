@@ -1,32 +1,32 @@
 /**
- * Useful Templates for Perfect Ostrove Blossom.
+ * Useful Templates.
  * Alex Striff.
  */
 
-#ifndef POBT_H
-#define POBT_H
+#ifndef COMMONT_H
+#define COMMONT_H
 
 #include <type_traits>
 
-#define POBT_VERIFY_BASIC(CLASS) \
+#define COMMON_VERIFY_BASIC(CLASS) \
 static_assert(std::is_destructible< CLASS >(), \
-		"POBT: " #CLASS " objects are not destructible!")
+		"COMMON: " #CLASS " objects are not destructible!")
 
-#define POBT_VERIFY_MOVE(CLASS) \
-	POBT_VERIFY_BASIC(CLASS); \
+#define COMMON_VERIFY_MOVE(CLASS) \
+	COMMON_VERIFY_BASIC(CLASS); \
 static_assert(std::is_move_constructible< CLASS >(), \
-		"POBT: " #CLASS " objects are not move-constructible!"); \
+		"COMMON: " #CLASS " objects are not move-constructible!"); \
 static_assert(std::is_move_assignable< CLASS >(), \
-		"POBT: " #CLASS " objects are not move-assignable!")
+		"COMMON: " #CLASS " objects are not move-assignable!")
 
-#define POBT_VERIFY(CLASS) \
-	POBT_VERIFY_MOVE(CLASS); \
+#define COMMON_VERIFY(CLASS) \
+	COMMON_VERIFY_MOVE(CLASS); \
 static_assert(std::is_copy_constructible< CLASS >(), \
-		"POBT: " #CLASS " objects are not copy-constructible!"); \
+		"COMMON: " #CLASS " objects are not copy-constructible!"); \
 static_assert(std::is_copy_assignable< CLASS >(), \
-		"POBT: " #CLASS " objects are not copy-assignable!")
+		"COMMON: " #CLASS " objects are not copy-assignable!")
 
-namespace pob
+namespace voronoi
 {
 	/*******************************************************************
 	 * Mini STL <type_traits>-like templates for learning TMP.         *
@@ -177,5 +177,5 @@ namespace pob
 		}
 }
 
-#endif /* POBT_H */
+#endif /* COMMONT_H */
 

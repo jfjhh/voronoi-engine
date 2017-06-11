@@ -1,9 +1,9 @@
 /**
- * Perfect Ostrove Blossom Main.
+ * Voronoi Engine Main.
  * Alex Striff.
  */
 
-#include "pob.h"
+#include "common.h"
 #include "ptexture.h"
 #include "ptimer.h"
 #include "stage.h"
@@ -31,8 +31,8 @@ bool init(void)
 {
 	fprintf(stderr,
 			"\n"
-			"\tPerfect Ostrove Blossom %10s\n"
-			"\t==================================\n",
+			"\t Voronoi Engine %10s\n"
+			"\t===========================\n",
 			VERSION);
 
 	// Initialize SDL.
@@ -161,13 +161,6 @@ bool load_media(void)
 				TTF_GetError());
 		return false;
 	}
-
-	// Render title text.
-	// SDL_Color textColor = { 255, 0, 255 };
-	// if (!gTextTexture.load_text("Perfect Ostrove Blossom", textColor)) {
-	// 	fputs("Failed to render title text!\n", stderr);
-	// 	quit(EXIT_FAILURE);
-	// }
 
 	// Load the bullet textures.
 	for (auto& b: BULLETS) {
@@ -370,7 +363,7 @@ int main(int argc, const char **argv)
 		}
 
 		// Log and developer information text.
-		stringRGBA(gRenderer, 8, 8,  "Perfect Ostrove Blossom", 255, 255, 255, 255);
+		stringRGBA(gRenderer, 8, 8,  "Voronoi Engine " VERSION, 255, 255, 255, 255);
 
 		logText.str("");
 		logText

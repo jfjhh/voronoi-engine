@@ -1,5 +1,15 @@
 *.o
 *.so
 *~
-pob
+voronoi
+research/
+media/**
+!media/*.jpg
+!media/*.png
+!media/*.gif
+!media/*.tiff
+!media/*.eps
+!media/*.pdf
+!media/*.ai
+!media/*.ttf
 

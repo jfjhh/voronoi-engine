@@ -8,7 +8,7 @@
 
 #include <math.h>
 #include <vector>
-#include "pob.h"
+#include "common.h"
 #include "pobject.h"
 #include "bulletdata.h"
 

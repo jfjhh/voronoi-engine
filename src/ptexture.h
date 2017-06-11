@@ -6,7 +6,7 @@
 #ifndef PTEXTURE_H
 #define PTEXTURE_H
 
-#include "pob.h"
+#include "common.h"
 #include "circle.h"
 
 class PTexture
@@ -69,7 +69,7 @@ class PTexture
 		SDL_Rect *sbox_ptr(void) const;
 		SDL_Texture *texture_ptr(void) const;
 };
-POBT_VERIFY_MOVE(PTexture);
+COMMON_VERIFY_MOVE(PTexture);
 
 #endif /* PTEXTURE_H */
 

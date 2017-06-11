@@ -7,7 +7,7 @@
 #define RANGE_H
 
 #include <limits>
-#include "pobt.h"
+#include "commont.h"
 
 using coord = double;
 
@@ -52,7 +52,7 @@ struct Range
 		}
 	}
 };
-POBT_VERIFY(Range);
+COMMON_VERIFY(Range);
 
 const auto inverse_range = Range(
 		std::numeric_limits<coord>::max(),

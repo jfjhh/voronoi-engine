@@ -6,7 +6,7 @@
 #ifndef PTIMER_H
 #define PTIMER_H
 
-#include "pob.h"
+#include "common.h"
 
 class PTimer
 {
@@ -30,7 +30,7 @@ class PTimer
 		virtual bool isStarted(void) const;
 		virtual bool isPaused(void) const;
 };
-POBT_VERIFY(PTimer);
+COMMON_VERIFY(PTimer);
 
 #endif /* PTIMER_H */
 

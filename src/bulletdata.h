@@ -8,7 +8,7 @@
 
 #include <memory>
 #include <array>
-#include "pobt.h"
+#include "commont.h"
 #include "ptexture.h"
 #include "hitbox.h"
 
@@ -28,7 +28,7 @@ enum class BulletType : int {
 	CIRCLE,
 	RECT,
 };
-POBT_VERIFY(BulletType);
+COMMON_VERIFY(BulletType);
 
 /**
  * The bullet data structure.
@@ -39,7 +39,7 @@ using BulletData = struct bullet_data_t {
 	Hitbox hitbox;
 	std::shared_ptr<PTexture> texture;
 };
-POBT_VERIFY(BulletData);
+COMMON_VERIFY(BulletData);
 
 extern std::array<BulletData, BULLET_DATA_MAX> BULLETS;
 

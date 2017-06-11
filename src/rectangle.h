@@ -53,7 +53,7 @@ class Rectangle : virtual public Shape
 		coord hwidth(void)  const;
 		coord hheight(void) const;
 };
-POBT_VERIFY(Rectangle);
+COMMON_VERIFY(Rectangle);
 
 #endif /* RECTANGLE_H */
 

@@ -49,7 +49,7 @@ class Ellipse : virtual public Shape
 		coord xRadius(void) const;
 		coord yRadius(void) const;
 };
-POBT_VERIFY(Ellipse);
+COMMON_VERIFY(Ellipse);
 
 #endif /* ELLIPSE_H */
 

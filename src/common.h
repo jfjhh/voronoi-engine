@@ -3,8 +3,8 @@
  * Alex Striff.
  */
 
-#ifndef POB_H
-#define POB_H
+#ifndef COMMON_H
+#define COMMON_H
 
 #ifndef MEDIA_PATH
 #define MEDIA_PATH "./media/"
@@ -31,7 +31,7 @@
 #include <SDL2/SDL2_framerate.h>
 #include <SDL2/SDL2_gfxPrimitives.h>
 
-#include "pobt.h"
+#include "commont.h"
 
 extern size_t SCREEN_WIDTH;
 extern size_t SCREEN_HEIGHT;
@@ -45,5 +45,5 @@ extern SDL_Renderer *gRenderer;
 extern SDL_Surface  *gImage;
 extern TTF_Font     *gFont;
 
-#endif /* POB_H */
+#endif /* COMMON_H */
 

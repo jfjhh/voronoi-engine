@@ -9,7 +9,7 @@
 #include <math.h>
 #include <memory>
 #include <vector>
-#include "pob.h"
+#include "common.h"
 #include "ptexture.h"
 #include "ptimer.h"
 #include "hitbox.h"

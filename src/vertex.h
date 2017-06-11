@@ -5,7 +5,7 @@
 #ifndef VERTEX_H
 #define VERTEX_H
 
-#include "pobt.h"
+#include "commont.h"
 #include "range.h"
 
 struct VoronoiVertex;
@@ -72,7 +72,7 @@ struct Vertex
 		};
 	};
 };
-POBT_VERIFY(Vertex);
+COMMON_VERIFY(Vertex);
 
 struct VoronoiVertex : Vertex
 {
@@ -124,7 +124,7 @@ struct VoronoiVertex : Vertex
 		return { std::move(Vertex::rotate(to, ox, oy)), r };
 	};
 };
-POBT_VERIFY(VoronoiVertex);
+COMMON_VERIFY(VoronoiVertex);
 
 inline Vertex::operator VoronoiVertex(void) const
 {

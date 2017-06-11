@@ -35,7 +35,7 @@ class Point : virtual public Shape
 		bool intersects(const Point& t) const;
 		void render(void) const final override;
 };
-POBT_VERIFY(Point);
+COMMON_VERIFY(Point);
 
 #endif /* POINT_H */
 

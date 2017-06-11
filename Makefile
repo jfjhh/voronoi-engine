@@ -1,9 +1,9 @@
 #
-# Perfect Ostrove Blosssom Makefile.
+# Voronoi Engine Makefile.
 # Alex Striff.
 #
 
-PROJNAME   = pob
+PROJNAME   = voronoi
 VERSION    = v0.0.1
 
 MKDIR_P    = mkdir -p

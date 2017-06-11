@@ -6,7 +6,7 @@
 #ifndef CIRCLE_H
 #define CIRCLE_H
 
-#include "pob.h"
+#include "common.h"
 #include "ellipse.h"
 
 class Circle : public Ellipse
@@ -25,7 +25,7 @@ class Circle : public Ellipse
 		Range project(coord on) const final override;
 		coord radius(void) const;
 };
-POBT_VERIFY(Circle);
+COMMON_VERIFY(Circle);
 
 bool Circle_HasIntersection(const Circle *a, const Circle *b);
 bool Circle_HasIntersection(const Circle *a, const SDL_Rect *b);

@@ -5,7 +5,7 @@
 #ifndef UNIONSHAPE_H
 #define UNIONSHAPE_H
 
-#include "pobt.h"
+#include "commont.h"
 #include "shape.h"
 
 using ShapeUnion = std::vector<ShapePointer>;
@@ -48,7 +48,7 @@ class UnionShape : virtual public Shape
 
 		ShapeUnion shapePointers(void) const;
 };
-POBT_VERIFY(UnionShape);
+COMMON_VERIFY(UnionShape);
 
 #endif /* UNIONSHAPE_H */
 

@@ -6,7 +6,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "pob.h"
+#include "common.h"
 #include "ptexture.h"
 #include "hitbox.h"
 
@@ -76,7 +76,7 @@ class Player
 		double getY(void) const;
 		void   setPosition(double px, double py);
 };
-POBT_VERIFY_MOVE(Player);
+COMMON_VERIFY_MOVE(Player);
 
 #endif /* PLAYER_H */
 

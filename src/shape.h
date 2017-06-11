@@ -9,7 +9,7 @@
 #include <vector>
 #include "vertex.h"
 #include "range.h"
-#include "pob.h"
+#include "common.h"
 
 using ConvexHull  = std::vector<Vertex>;
 using VoronoiHull = std::vector<VoronoiVertex>;
@@ -38,7 +38,7 @@ class Shape
 		virtual ConvexHull  vertices(void) const;
 		virtual VoronoiHull voronoiVertices(void) const;
 };
-POBT_VERIFY_BASIC(Shape);
+COMMON_VERIFY_BASIC(Shape);
 
 using ShapePointer = std::shared_ptr<Shape>;
 

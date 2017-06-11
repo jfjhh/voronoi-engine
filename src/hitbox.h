@@ -10,7 +10,7 @@
 #include <memory>
 #include <vector>
 
-#include "pob.h"
+#include "common.h"
 #include "circle.h"
 
 class Hitbox
