@@ -34,7 +34,7 @@ void PObject::update(void)
 	y += v * sin(t) * time;
 }
 
-void PObject::offset(double dx, double dy)
+void PObject::translate(double dx, double dy)
 {
 	x += dx;
 	y += dy;
@@ -48,7 +48,7 @@ void PObject::setHitbox(Hitbox h)
 Hitbox PObject::getHitbox(void) const
 {
 	Hitbox h = hitbox;
-	h.offset(x, y);
+	h.translate(x, y);
 	return h;
 }
 
@@ -74,7 +74,13 @@ void PObject::unpause(void)
 
 double PObject::getTime(void) const
 {
-	return timer.ticks() / 1e3;
+	// return 10e-3;
+	// if (std::isnan(gFPS) || gFPS == 0.0) {
+	// 	return 1.0 / (double) SCREEN_FPS;
+	// } else {
+		return 1.0 / gFPS;
+	// }
+	// return timer.ticks() / 1e3;
 }
 
 bool PObject::isStarted(void) const

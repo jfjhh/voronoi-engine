@@ -8,7 +8,7 @@ void Bullet::render(double xoff, double yoff) const
 	// Render the bullet's hitbox.
 	SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0xff, 0xff);
 	Hitbox h = hitbox;
-	h.offset(x, y);
+	h.translate(x, y);
 	h.render();
 }
 

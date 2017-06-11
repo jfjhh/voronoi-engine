@@ -38,6 +38,7 @@ extern size_t SCREEN_HEIGHT;
 extern size_t SCREEN_FPS;
 extern size_t GFX_FPS;
 extern double SCREEN_TICKS;
+extern double gFPS;
 
 extern SDL_Window   *gWindow;
 extern SDL_Renderer *gRenderer;

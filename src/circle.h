@@ -15,16 +15,17 @@ class Circle : public Ellipse
 		// For backwards-compatibility with an old Circle structure that
 		// mirrored SDL_Rect. Remove these members when the Hitbox => Shape
 		// migration is complete.
-		int r, x, y;
+		int x, y, r;
 
-		Circle(coord r = 1.0, coord x = 1.0, coord y = 1.0);
+		Circle(coord x = 0.0, coord y = 0.0, coord r = 1.0);
+		Circle(coord r = 1.0) { Circle(0.0, 0.0, r); };
 
 		bool intersects(const Circle& t) const;
 		void render(void) const final override;
 		Range project(coord on) const final override;
 		coord radius(void) const;
 };
-POBT_VERIFY_BASIC(Circle);
+POBT_VERIFY(Circle);
 
 bool Circle_HasIntersection(const Circle *a, const Circle *b);
 bool Circle_HasIntersection(const Circle *a, const SDL_Rect *b);

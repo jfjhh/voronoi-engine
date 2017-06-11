@@ -97,7 +97,7 @@ SDL_Rect Hitbox::unionRect(void) const
 	return u;
 }
 
-void Hitbox::offset(int x, int y)
+void Hitbox::translate(int x, int y)
 {
 	for (size_t i = 0; i < rects.size(); i++) {
 		rects[i].x += x;
@@ -113,22 +113,22 @@ void Hitbox::offset(int x, int y)
 void Hitbox::render(void) const
 {
 	// Draw rectangles.
-	for (size_t i = 0; i < rects.size(); i++) {
-		int x = rects[i].x;
-		int y = rects[i].y;
-		int w = rects[i].w;
-		int h = rects[i].h;
-		rectangleRGBA(gRenderer,
-				x, y, x + w, y + h,
-				0, 0, 255, 255);
-	}
+	// for (size_t i = 0; i < rects.size(); i++) {
+	// 	int x = rects[i].x;
+	// 	int y = rects[i].y;
+	// 	int w = rects[i].w;
+	// 	int h = rects[i].h;
+	// 	rectangleRGBA(gRenderer,
+	// 			x, y, x + w, y + h,
+	// 			0, 0, 255, 255);
+	// }
 
-	// Draw circles, pixel by pixel.
-	for (size_t i = 0; i < circles.size(); i++) {
-		circleRGBA(gRenderer,
-				circles[i].x, circles[i].y, circles[i].r,
-				0, 0, 255, 255);
-	}
+	// Draw circles.
+	// for (size_t i = 0; i < circles.size(); i++) {
+	// 	circleRGBA(gRenderer,
+	// 			circles[i].x, circles[i].y, circles[i].r,
+	// 			255, 0, 255, 255);
+	// }
 }
 
 std::vector<SDL_Rect> Hitbox::getRects(void) const

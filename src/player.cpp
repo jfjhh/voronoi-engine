@@ -124,7 +124,7 @@ double Player::angleFrom(double xf, double yf) const
 Hitbox Player::hitbox(void) const
 {
 	Hitbox h = hbox;
-	h.offset(x, y);
+	h.translate(x, y);
 	return h;
 }
 

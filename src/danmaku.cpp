@@ -16,7 +16,7 @@ void Danmaku::free(void)
 
 void Danmaku::addPObject(std::shared_ptr<PObject> d)
 {
-	d->offset(x, y);
+	d->translate(x, y);
 	objects.push_back(d);
 }
 
@@ -53,7 +53,7 @@ void Danmaku::render(double xoff, double yoff) const
 	// Render the danmaku's hitbox.
 	SDL_SetRenderDrawColor(gRenderer, 0x00, 0xff, 0xff, 0xff);
 	Hitbox h = hitbox;
-	h.offset(x + xoff, y + yoff);
+	h.translate(x + xoff, y + yoff);
 	h.render();
 
 	// Render the danmaku's objects.
@@ -62,10 +62,10 @@ void Danmaku::render(double xoff, double yoff) const
 	}
 }
 
-void Danmaku::offset(double dx, double dy)
+void Danmaku::translate(double dx, double dy)
 {
 	for (size_t i = 0; i < objects.size(); i++) {
-		objects[i]->offset(dx, dy);
+		objects[i]->translate(dx, dy);
 	}
 }
 

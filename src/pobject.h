@@ -94,7 +94,7 @@ class PObject : public PTimer
 		/**
 		 * Offsets an object's position.
 		 */
-		virtual void offset(double dx, double dy);
+		virtual void translate(double dx, double dy);
 
 		/**
 		 * Sets an object's hitbox.

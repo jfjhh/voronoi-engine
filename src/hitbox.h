@@ -58,7 +58,7 @@ class Hitbox
 		/**
 		 * Moves the hitbox to be centered around new coordinates.
 		 */
-		void offset(int x, int y);
+		void translate(int x, int y);
 
 		/**
 		 * Renders the hitbox on screen.

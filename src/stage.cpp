@@ -16,7 +16,7 @@ void Stage::free(void)
 
 void Stage::addPObject(std::shared_ptr<PObject> d)
 {
-	d->offset(x, y);
+	d->translate(x, y);
 	objects.push_back(d);
 }
 
@@ -53,7 +53,7 @@ void Stage::render(double xoff, double yoff) const
 	// Render the stage's hitbox.
 	SDL_SetRenderDrawColor(gRenderer, 0x00, 0xff, 0xff, 0xff);
 	Hitbox h = hitbox;
-	h.offset(x + xoff, y + yoff);
+	h.translate(x + xoff, y + yoff);
 	h.render();
 
 	// Render the stage's objects.

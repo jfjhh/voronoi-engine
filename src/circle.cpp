@@ -1,7 +1,7 @@
 #include "circle.h"
 
-Circle::Circle(coord r, coord x, coord y):
-	r((int)r), x((int)x), y((int)y)
+Circle::Circle(coord x, coord y, coord r):
+	x((int)x), y((int)y), r((int)r)
 {
 	t      = 0.0;
 	rx     = r;

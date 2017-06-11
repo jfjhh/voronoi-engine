@@ -23,12 +23,12 @@ class Shape
 		coord t; /**< Angle of shape. */
 
 	public:
-		virtual void offset(coord x, coord y);
+		virtual void translate(coord x, coord y);
 		virtual bool intersects(const Shape& t) const = 0;
 		virtual void render(void) const = 0;
 
 		virtual void setAngle(coord to);
-		void rotate(coord by);
+		virtual void rotate(coord by);
 		coord angle(void) const;
 
 		virtual Range projectOn(coord axis = 0.0) const;

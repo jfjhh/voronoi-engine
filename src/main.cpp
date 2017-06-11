@@ -13,6 +13,7 @@ size_t SCREEN_HEIGHT = 720;
 size_t SCREEN_FPS    = 60;
 size_t GFX_FPS       = SCREEN_FPS;
 double SCREEN_TICKS  = 1e3 / SCREEN_FPS;
+double gFPS          = (double) SCREEN_FPS;
 
 SDL_Window   *gWindow   = NULL;
 SDL_Renderer *gRenderer = NULL;
@@ -20,8 +21,8 @@ SDL_Surface  *gImage    = NULL;
 TTF_Font     *gFont     = NULL;
 
 PTexture   gBgTexture;
-PTexture   gTextTexture;
-PTexture   gFPSTexture;
+// PTexture   gTextTexture;
+// PTexture   gFPSTexture;
 FPSmanager gFPSManager;
 
 std::vector<Stage> gStages;
@@ -63,6 +64,7 @@ bool init(void)
 	// Create the renderer for the window.
 	auto renderer_flags
 		= SDL_RENDERER_PRESENTVSYNC;
+		// = 0;
 
 	gRenderer = SDL_CreateRenderer(
 			gWindow, -1, renderer_flags | SDL_RENDERER_ACCELERATED);
@@ -116,8 +118,8 @@ void quit(int status)
 
 	// Destroy textures.
 	gBgTexture.free();
-	gTextTexture.free();
-	gFPSTexture.free();
+	// gTextTexture.free();
+	// gFPSTexture.free();
 	for (auto&& b: BULLETS) {
 		b.texture->free();
 		b.texture.reset();
@@ -147,7 +149,7 @@ bool load_media(void)
 	fprintf(stderr, "\tMEDIA_PATH\t: '%s'\n", MEDIA_PATH);
 
 	// Load the background texture.
-	if (!gBgTexture.load("circle_bullet.png")) {
+	if (!gBgTexture.load("background.png")) {
 		fputs("PTexture '%s' could not be loaded!\n", stderr);
 		return false;
 	}
@@ -161,11 +163,11 @@ bool load_media(void)
 	}
 
 	// Render title text.
-	SDL_Color textColor = { 255, 0, 255 };
-	if (!gTextTexture.load_text("Perfect Ostrove Blossom", textColor)) {
-		fputs("Failed to render title text!\n", stderr);
-		quit(EXIT_FAILURE);
-	}
+	// SDL_Color textColor = { 255, 0, 255 };
+	// if (!gTextTexture.load_text("Perfect Ostrove Blossom", textColor)) {
+	// 	fputs("Failed to render title text!\n", stderr);
+	// 	quit(EXIT_FAILURE);
+	// }
 
 	// Load the bullet textures.
 	for (auto& b: BULLETS) {
@@ -195,8 +197,7 @@ int main(int argc, const char **argv)
 	// Create game objects.
 	SDL_Event e;
 	PTimer    fpsTimer;
-	PTimer    stepTimer;
-	SDL_Color textColor     = { 255, 0, 255 };
+	// SDL_Color textColor     = { 255, 0, 255 };
 	double    angle         = 0.0;
 	bool      user_quit     = false;
 
@@ -224,32 +225,23 @@ int main(int argc, const char **argv)
 	// Create the player.
 	Player player("player_sprites.png");
 	player.sprite.setSprite(Player::Sprite::CENTER);
-	player.sprite.setColor(255, 0, 255);
-	player.setPosition(SCREEN_WIDTH / 2, 4 * SCREEN_HEIGHT / 5);
-	std::stringstream timeText;
+	player.sprite.setColor(48, 176, 255);
+	player.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+	std::stringstream logText;
 
 	// Main game loop.
 	fpsTimer.start();
 	int countedFrames = 0;
+	bool hit = false;
 	while (!user_quit) {
-		// Calculate real time step.
-		double timeStep = stepTimer.ticks() / 1e3;
-		stepTimer.start();
-		s1.start();
-
 		// Calclulate FPS.
 		double meanFPS = countedFrames / (fpsTimer.ticks() / 1e3);
 		if (meanFPS > 1e6) { // Extremely high FPS are erroneous.
-			meanFPS = 0;
+			meanFPS = 0.0;
 		}
-
-		// Render FPS texture.
-		timeText.str("");
-		timeText << "FPS: " << meanFPS;
-		if (!gFPSTexture.load_text(
-					timeText.str().substr(0, 10).c_str(),
-					textColor)) {
-			fputs("Could not render FPS texture!\n", stderr);
+		gFPS = meanFPS;
+		if (std::isnan(gFPS) || gFPS == 0.0) {
+			gFPS = SCREEN_FPS;
 		}
 
 		// Handle events on queue.
@@ -298,13 +290,13 @@ int main(int argc, const char **argv)
 			auto n = std::make_shared<Bullet>(
 					0, 0,
 					player.angleFrom(d->x, d->y),
-					50, 0,
-					0, 0);
+					0.1, 0,
+					-0.01, 0);
 			n->setType(BulletType::RECT);
 			d->addPObject(n);
 		}
 
-		if (countedFrames % SCREEN_FPS == 0) {
+		if (countedFrames % 5 == 0) {
 			d->map([d](std::shared_ptr<PObject> obj, std::shared_ptr<Danmaku> dobj, size_t di)
 					{
 					if (dobj) {
@@ -313,7 +305,7 @@ int main(int argc, const char **argv)
 							d->x, d->y,
 							(dobj->t)*a,
 							15, 0,
-							5, 0);
+							-1, 0);
 					q->setType(BulletType::CIRCLE);
 					dobj->addPObject(q);
 					}
@@ -326,19 +318,18 @@ int main(int argc, const char **argv)
 				[](Stage& s){ s.update(); });
 
 		// Move the player.
-		player.move(timeStep);
+		// player.move(timeStep);
+		player.move(1.0 / gFPS);
 
 		// Check player collision with scene objects.
 		Hitbox dh = d->getHitbox();
 		Hitbox ph = player.hitbox();
-		fprintf(stderr, "\tTotal hitboxes: (%d, %d)\r",
-				(int) (ph.getRects().size()   + dh.getRects().size()),
-				(int) (ph.getCircles().size() + dh.getCircles().size()));
-
 		if (player.hitbox().intersects(dh)) {
-			fputs("\tHit!", stderr);
+			hit = true;
+			player.sprite.setColor(255, 128, 192);
 		} else {
-			fputs("\t    ", stderr);
+			hit = false;
+			player.sprite.setColor(48, 176, 255);
 		}
 
 		// Clear the screen.
@@ -353,7 +344,8 @@ int main(int argc, const char **argv)
 		gBgTexture.render(SCREEN_WIDTH  / 2, SCREEN_HEIGHT / 2, 1024, 1024,
 				NULL, angle, NULL, SDL_FLIP_NONE);
 
-		angle += 2*M_PI / 64;
+		// angle += 2*M_PI / 64;
+		angle += (SCREEN_FPS / gFPS) * 2*M_PI / 64;
 
 		// Draw the player.
 		player.render();
@@ -363,31 +355,58 @@ int main(int argc, const char **argv)
 				[](Stage& s){ s.render(); });
 
 		// Draw text.
-		gTextTexture.render(SCREEN_WIDTH / 2, 36);
-		gFPSTexture.render((SCREEN_WIDTH + gFPSTexture.width()) / 2,
-				SCREEN_HEIGHT - gFPSTexture.height() / 2);
+		// gTextTexture.render(SCREEN_WIDTH / 2, 36);
+		// gFPSTexture.render((SCREEN_WIDTH + gFPSTexture.width()) / 2,
+		// 		SCREEN_HEIGHT - gFPSTexture.height() / 2);
 
-		// Draw a crosshair line of black dots.
-		SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xff);
+		// Draw a crosshair line of dots.
 		for (size_t i = 0; i < SCREEN_HEIGHT; i += 3)
 		{
-			SDL_RenderDrawPoint(gRenderer, SCREEN_WIDTH / 2, i);
+			pixelRGBA(gRenderer, SCREEN_WIDTH / 2, i, 0, 255, 255, 127);
 		}
 		for (size_t i = 0; i < SCREEN_WIDTH; i += 3)
 		{
-			SDL_RenderDrawPoint(gRenderer, i, SCREEN_HEIGHT / 2);
+			pixelRGBA(gRenderer, i, SCREEN_HEIGHT / 2, 0, 255, 255, 127);
 		}
+
+		// Log and developer information text.
+		stringRGBA(gRenderer, 8, 8,  "Perfect Ostrove Blossom", 255, 255, 255, 255);
+
+		logText.str("");
+		logText
+			<< "       FPS: "
+			<< (round(meanFPS * 100.0)) / 100.0;
+		stringRGBA(gRenderer, 8, 24, logText.str().c_str(), 255, 255, 255, 255);
+
+		logText.str("");
+		logText
+			<< "    Player: "
+			<< (hit ? "Hit" : "OK");
+		stringRGBA(gRenderer, 8, 32, logText.str().c_str(), 255, 255, 255, 255);
+
+		int rects = (int) (ph.getRects().size() + dh.getRects().size());
+		logText.str("");
+		logText
+			<< "Rectangles: "
+			<< rects;
+		stringRGBA(gRenderer, 8, 40, logText.str().c_str(), 255, 255, 255, 255);
+
+		int circles = (int) (ph.getCircles().size() + dh.getCircles().size());
+		logText.str("");
+		logText
+			<< "   Circles: "
+			<< circles;
+		stringRGBA(gRenderer, 8, 48, logText.str().c_str(), 255, 255, 255, 255);
+
+		logText.str("");
+		logText
+			<< "     Total: "
+			<< circles + rects;
+		stringRGBA(gRenderer, 8, 56, logText.str().c_str(), 255, 255, 255, 255);
 
 		// Update the screen.
 		SDL_RenderPresent(gRenderer);
 		countedFrames++;
-
-		// Manually delay the frame when VSYNC is disabled.
-		// double frameTicks = stepTimer.ticks();
-		// if (frameTicks < 1e3 / SCREEN_TICKS) {
-		// 	fprintf(stderr, "\n%g\n", frameTicks);
-		// 	SDL_Delay(SCREEN_TICKS - frameTicks);
-		// }
 	}
 
 	quit(EXIT_SUCCESS);

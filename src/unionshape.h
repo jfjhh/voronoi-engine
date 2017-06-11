@@ -40,10 +40,11 @@ class UnionShape : virtual public Shape
 		void add(ShapePointer t);
 
 		void render(void) const override;
-		void offset(double x, double y) final override;
+		void translate(double x, double y) final override;
 		bool intersects(const Shape& t) const override;
 		Range project(coord on = 0.0) const final override;
 		void setAngle(double to) final override;
+		void rotate(double by) final override;
 
 		ShapeUnion shapePointers(void) const;
 };

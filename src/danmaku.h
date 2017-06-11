@@ -50,7 +50,7 @@ class Danmaku : public PObject
 		/**
 		 * Offsets an object's position.
 		 */
-		virtual void offset(double dx, double dy);
+		virtual void translate(double dx, double dy);
 
 		/**
 		 * Maps a function over a danmaku's objects.

@@ -8,14 +8,10 @@ void UnionShape::add(ShapePointer t)
 	vhull.insert(vhull.end(), v.begin(), v.end());
 	shapes.push_back(t);
 
-	auto xc = 0.0;
-	auto yc = 0.0;
+	auto vc = VoronoiVertex{};
 	for (const auto& s: shapes) {
-		auto c = s->vcenter();
-		xc += c.x;
-		yc += c.y;
+		vc += s->vcenter();
 	}
-	auto vc = VoronoiVertex{xc, yc};
 
 	auto max_distance = 0.0;
 	auto i = shapes.begin();
@@ -36,12 +32,12 @@ void UnionShape::render(void) const
 	}
 }
 
-void UnionShape::offset(double x, double y)
+void UnionShape::translate(double x, double y)
 {
 	for (const auto& s: shapes) {
-		s->offset(x, y);
+		s->translate(x, y);
 	}
-	center.offset(x, y);
+	center.translate(x, y);
 }
 
 bool UnionShape::intersects(const Shape& t) const
@@ -71,6 +67,14 @@ void UnionShape::setAngle(double to)
 		s->setAngle(to);
 	}
 	Shape::setAngle(to);
+}
+
+void UnionShape::rotate(double by)
+{
+	for (const auto& s: shapes) {
+		s->rotate(by);
+	}
+	Shape::rotate(by);
 }
 
 ShapeUnion UnionShape::shapePointers(void) const
