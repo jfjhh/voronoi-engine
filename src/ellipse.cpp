@@ -1,10 +1,11 @@
 #include "ellipse.h"
 
 Ellipse::Ellipse(coord rx, coord ry, coord x, coord y, coord t):
+	Shape(2.0 * rx, 2.0 * ry),
 	rx(rx), ry(ry)
 {
-	t      = 0.0;
-	center = {x, y, std::max(rx, ry)};
+	center.x = x;
+	center.y = y;
 	chull.push_back(center);
 	vhull.push_back(center);
 }
@@ -24,7 +25,9 @@ bool Ellipse::intersects(const Point& t) const
 
 void Ellipse::render(void) const
 {
-	ellipseRGBA(gRenderer, center.x, center.y, rx, ry, 255, 0, 255, 255);
+	auto x = (textureSide / 2);
+	auto y = (textureSide / 2);
+	ellipseRGBA(gRenderer, x, y, rx, ry, 255, 255, 255, 255);
 }
 
 Range Ellipse::project(coord on) const

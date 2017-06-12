@@ -94,6 +94,21 @@ bool PTexture::load_text(
 	return (texture != NULL);
 }
 
+bool PTexture::createBlank(
+		int width, int height,
+		SDL_TextureAccess access)
+{
+	texture = SDL_CreateTexture(
+			gRenderer, SDL_PIXELFORMAT_RGBA8888, access, width, height);
+	setBlendMode(SDL_BLENDMODE_BLEND);
+	if (texture) {
+		w = width;
+		h = height;
+	}
+
+	return (texture != NULL);
+}
+
 void PTexture::setColor(Uint8 red, Uint8 green, Uint8 blue)
 {
 	// Modulate the color of the texture.
@@ -160,7 +175,7 @@ void PTexture::render(
 void PTexture::render(
 		int x, int y,
 		const SDL_Rect  *const clip,   double angle,
-		const SDL_Point *const center, SDL_RendererFlip flip) const
+		const SDL_Point *const center, SDL_RendererFlip flip = SDL_FLIP_NONE) const
 {
 	render(x, y, w, h, clip, angle, center, flip);
 }
@@ -168,7 +183,7 @@ void PTexture::render(
 void PTexture::render(
 		int x, int y, int w, int h,
 		const SDL_Rect  *const clip,   double angle,
-		const SDL_Point *const center, SDL_RendererFlip flip) const
+		const SDL_Point *const center, SDL_RendererFlip flip = SDL_FLIP_NONE) const
 {
 	// Create the rendering SDL_Rect.
 	SDL_Rect render_rect = {
@@ -184,7 +199,14 @@ void PTexture::render(
 
 	// Render the texture to the screen.
 	SDL_RenderCopyEx(gRenderer, texture, clip, &render_rect,
-			angle, center, flip);
+			angle * 180.0 / M_PI, center, flip);
+}
+
+SDL_Texture *PTexture::setRenderTarget(void)
+{
+	SDL_Texture *oldTarget = SDL_GetRenderTarget(gRenderer);
+	SDL_SetRenderTarget(gRenderer, texture);
+	return oldTarget;
 }
 
 int PTexture::width(void) const

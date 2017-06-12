@@ -113,21 +113,18 @@ void Hitbox::translate(int x, int y)
 void Hitbox::render(void) const
 {
 	// Draw rectangles.
-	// for (size_t i = 0; i < rects.size(); i++) {
-	// 	int x = rects[i].x;
-	// 	int y = rects[i].y;
-	// 	int w = rects[i].w;
-	// 	int h = rects[i].h;
-	// 	rectangleRGBA(gRenderer,
-	// 			x, y, x + w, y + h,
-	// 			0, 0, 255, 255);
+	// for (const auto& r: rects) {
+		// int x = r.x;
+		// int y = r.y;
+		// int w = r.w;
+		// int h = r.h;
+		// rectangleRGBA(gRenderer, x, y, x + w, y + h, 0, 0, 255, 255);
 	// }
 
 	// Draw circles.
-	// for (size_t i = 0; i < circles.size(); i++) {
-	// 	circleRGBA(gRenderer,
-	// 			circles[i].x, circles[i].y, circles[i].r,
-	// 			255, 0, 255, 255);
+	// for (const auto& c: circles) {
+	// 	circleRGBA(gRenderer, c.x, c.y, c.r, 255, 0, 255, 255);
+	// 	// c.renderTexture();
 	// }
 }
 

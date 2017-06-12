@@ -52,44 +52,8 @@ Hitbox PObject::getHitbox(void) const
 	return h;
 }
 
-void PObject::start(void)
-{
-	timer.start();
-}
-
-void PObject::stop(void)
-{
-	timer.stop();
-}
-
-void PObject::pause(void)
-{
-	timer.pause();
-}
-
-void PObject::unpause(void)
-{
-	timer.unpause();
-}
-
 double PObject::getTime(void) const
 {
-	// return 10e-3;
-	// if (std::isnan(gFPS) || gFPS == 0.0) {
-	// 	return 1.0 / (double) SCREEN_FPS;
-	// } else {
-		return 1.0 / gFPS;
-	// }
-	// return timer.ticks() / 1e3;
-}
-
-bool PObject::isStarted(void) const
-{
-	return timer.isStarted();
-}
-
-bool PObject::isPaused(void) const
-{
-	return timer.isPaused();
+	return 1.0 / gFPS;
 }
 

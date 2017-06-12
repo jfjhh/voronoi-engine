@@ -7,7 +7,6 @@
 #define PTEXTURE_H
 
 #include "common.h"
-#include "circle.h"
 
 class PTexture
 {
@@ -43,6 +42,10 @@ class PTexture
 		bool load_text(const std::string& text, SDL_Color color);
 		bool load_text(const std::string& text, SDL_Color color, TTF_Font *font);
 
+		bool createBlank(
+				int width, int height,
+				SDL_TextureAccess access = SDL_TEXTUREACCESS_STREAMING);
+
 		void setColor(Uint8 red, Uint8 green, Uint8 blue);
 		void setBlendMode(SDL_BlendMode blending);
 		void setAlpha(Uint8 alpha);
@@ -60,6 +63,8 @@ class PTexture
 				const SDL_Rect  *const clip, double angle,
 				const SDL_Point *const center, SDL_RendererFlip flip) const;
 
+		SDL_Texture *setRenderTarget(void);
+
 		int width(void)   const;
 		int height(void)  const;
 		int swidth(void)  const;
@@ -70,6 +75,8 @@ class PTexture
 		SDL_Texture *texture_ptr(void) const;
 };
 COMMON_VERIFY_MOVE(PTexture);
+
+using PTexturePointer = std::shared_ptr<PTexture>;
 
 #endif /* PTEXTURE_H */
 

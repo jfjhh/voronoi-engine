@@ -16,7 +16,8 @@ struct Range
 	coord min;
 	coord max;
 
-	Range(coord min = 0.0, coord max = 0.0):
+	Range(coord min = std::numeric_limits<coord>::max(),
+			coord max = std::numeric_limits<coord>::min()):
 		min(min), max(max) {};
 
 	bool overlaps(const Range& r) const

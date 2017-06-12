@@ -62,14 +62,6 @@ class Danmaku : public PObject
 		 * Gets the union hitbox of the danmaku's hitboxes.
 		 */
 		virtual Hitbox getHitbox(void) const override;
-
-		/**
-		 * Timer actions.
-		 */
-		void start(void) override;
-		void stop(void) override;
-		void pause(void) override;
-		void unpause(void) override;
 };
 
 #endif /* DANMAKU_H */

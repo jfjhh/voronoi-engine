@@ -1,14 +1,64 @@
 #include "shape.h"
 
+Shape::Shape(coord tw)
+{
+	t = 0.0;
+	center = {0.0, 0.0, tw / 2.0};
+	shapeTexture = std::make_shared<PTexture>();
+	setTextureWidth(tw + 1.0);
+}
+
+Shape::Shape(coord tw, coord th): Shape(std::max(tw, th)) {}
+
 void Shape::translate(coord x, coord y)
 {
 	for (auto&& v: chull) {
-		v.translate(x, y);
+		v.translate(Vertex{x, y});
 	}
 	for (auto&& v: vhull) {
-		v.translate(x, y);
+		v.translate(VoronoiVertex{x, y});
 	}
-	center.translate(x, y);
+	center.translate(VoronoiVertex{x, y});
+}
+
+void Shape::render(void) const
+{
+	for (const auto& v: chull) {
+		pixelRGBA(gRenderer, v.x, v.y, 255, 255, 255, 255);
+	}
+	for (const auto& v: vhull) {
+		circleRGBA(gRenderer, v.x, v.y, v.r, 255, 255, 255, 255);
+	}
+}
+
+void Shape::renderTexture(coord add_rot) const
+{
+	if (!textureOK) return;
+	SDL_Texture *old = shapeTexture->setRenderTarget();
+	SDL_SetRenderDrawColor(gRenderer, 0xff, 0xff, 0xff, 0x00);
+	SDL_RenderClear(gRenderer);
+
+	render();
+
+	SDL_SetRenderTarget(gRenderer, old);
+	shapeTexture->render(center.x, center.y, NULL, t + add_rot, NULL, SDL_FLIP_NONE);
+}
+
+bool Shape::setTextureWidth(int tw)
+{
+	textureSide = tw;
+	return renewTexture();
+}
+
+bool Shape::renewTexture(void)
+{
+	return textureOK = shapeTexture->createBlank(
+			(int) textureSide, (int) textureSide, SDL_TEXTUREACCESS_TARGET);
+}
+
+bool Shape::textureStatus(void)
+{
+	return textureOK;
 }
 
 void Shape::setAngle(coord to)
@@ -51,7 +101,7 @@ ConvexHull Shape::vertices(void) const
 {
 	auto h = ConvexHull{};
 	for (const auto& v: chull) {
-		h.push_back(v.rotate(t));
+		h.push_back(v.rotate(t, center));
 	}
 	return h;
 }

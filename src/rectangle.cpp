@@ -1,10 +1,9 @@
 #include "rectangle.h"
 
 Rectangle::Rectangle(coord w, coord h, coord x, coord y, coord t):
+	Shape(w, h),
 	w(w), h(h), hw(w / 2.0), hh(h / 2.0)
 {
-	t      = 0.0;
-	center = {x, y, sqrt(w*w + h*h)};
 	chull.push_back({x - hw, y - hw});
 	chull.push_back({x - hw, y + hw});
 	chull.push_back({x + hw, y - hw});

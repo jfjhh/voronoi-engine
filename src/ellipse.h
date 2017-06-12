@@ -14,13 +14,14 @@ class Ellipse : virtual public Shape
 		coord rx, ry;
 
 	public:
-		Ellipse(coord rx = 1.0, coord ry = 1.0,
+		Ellipse(coord rx, coord ry,
 				coord x  = 0.0,  coord y = 0.0, coord t = 0.0);
 
 		Ellipse(const Ellipse& p) = default;
 		Ellipse& operator=(const Ellipse& p) = default;
 
-		Ellipse(Ellipse&& p)
+		Ellipse(Ellipse&& p):
+			Shape(2 * p.xRadius(), 2 * p.yRadius())
 		{
 			chull  = std::move(p.vertices());
 			vhull  = std::move(p.voronoiVertices());

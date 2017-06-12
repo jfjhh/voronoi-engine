@@ -17,8 +17,8 @@ class Circle : public Ellipse
 		// migration is complete.
 		int x, y, r;
 
-		Circle(coord x = 0.0, coord y = 0.0, coord r = 1.0);
-		Circle(coord r = 1.0) { Circle(0.0, 0.0, r); };
+		Circle(coord x, coord y, coord r);
+		Circle(coord r): Circle(0.0, 0.0, r) {};
 
 		bool intersects(const Circle& t) const;
 		void render(void) const final override;

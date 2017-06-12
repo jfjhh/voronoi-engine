@@ -19,13 +19,14 @@ class Rectangle : virtual public Shape
 		Rectangle(coord w = 1.0,  coord h = 1.0,
 				coord x   = 0.0,  coord y = 0.0, coord t = 0.0);
 
-		Rectangle(coord w = 1.0, coord x = 0.0,  coord y = 0.0, coord t = 0.0)
-		{ Rectangle(w, w, x, y, t); }
+		Rectangle(coord w = 1.0, coord x = 0.0,  coord y = 0.0, coord t = 0.0):
+			Shape(w, w) { Rectangle(w, w, x, y, t); }
 
 		Rectangle(const Rectangle& p) = default;
 		Rectangle& operator=(const Rectangle& p) = default;
 
-		Rectangle(Rectangle&& p)
+		Rectangle(Rectangle&& p):
+			Shape(p.width(), p.height())
 		{
 			chull  = std::move(p.vertices());
 			vhull  = std::move(p.voronoiVertices());

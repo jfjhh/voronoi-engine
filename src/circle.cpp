@@ -1,14 +1,12 @@
 #include "circle.h"
 
 Circle::Circle(coord x, coord y, coord r):
+	Shape(2 * r),
+	Ellipse(r, r, x, y, 0.0),
 	x((int)x), y((int)y), r((int)r)
 {
-	t      = 0.0;
-	rx     = r;
-	ry     = r;
-	center = {x, y, rx};
-	chull.push_back(center);
-	vhull.push_back(center);
+	rx = r;
+	ry = r;
 }
 
 bool Circle::intersects(const Circle& t) const
@@ -23,7 +21,9 @@ bool Circle::intersects(const Circle& t) const
 
 void Circle::render(void) const
 {
-	circleRGBA(gRenderer, center.x, center.y, rx, 255, 0, 255, 255);
+	auto x = (textureSide / 2);
+	auto y = (textureSide / 2);
+	circleRGBA(gRenderer, x, y, rx, 255, 255, 255, 255);
 }
 
 coord Circle::radius(void) const

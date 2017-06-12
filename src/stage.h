@@ -56,14 +56,6 @@ class Stage : public Danmaku
 		 */
 		void map(std::function<void(std::shared_ptr<PObject>,
 					std::shared_ptr<Stage>, size_t)> f);
-
-		/**
-		 * Timer actions.
-		 */
-		void start(void) override;
-		void stop(void) override;
-		void pause(void) override;
-		void unpause(void) override;
 };
 
 #endif /* STAGE_H */

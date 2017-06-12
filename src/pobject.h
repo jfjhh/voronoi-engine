@@ -11,10 +11,9 @@
 #include <vector>
 #include "common.h"
 #include "ptexture.h"
-#include "ptimer.h"
 #include "hitbox.h"
 
-class PObject : public PTimer
+class PObject
 {
 	public:
 		/**
@@ -107,23 +106,9 @@ class PObject : public PTimer
 		virtual Hitbox getHitbox(void) const;
 
 		/**
-		 * Timer actions.
-		 */
-		virtual void start(void);
-		virtual void stop(void);
-		virtual void pause(void);
-		virtual void unpause(void);
-
-		/**
 		 * Get the timer's time.
 		 */
 		double getTime(void) const;
-
-		/**
-		 * Get the timer's status;
-		 */
-		virtual bool isStarted(void) const;
-		virtual bool isPaused(void) const;
 
 	private:
 		/**
@@ -138,12 +123,6 @@ class PObject : public PTimer
 		Hitbox                    hitbox;  /**< The object's hitbox(es).  */
 		std::shared_ptr<PTexture> texture; /**< A pointer to the texture. */
 		// PTexture &texture;
-
-		/**
-		 * Internal timer.
-		 */
-		PTimer timer;
-
 };
 
 #endif /* POBJECT_H */

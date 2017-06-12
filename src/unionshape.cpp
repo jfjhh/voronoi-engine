@@ -1,5 +1,11 @@
 #include "unionshape.h"
 
+void UnionShape::updateTextureSide(void)
+{
+	auto v = std::max_element(chull.begin(), chull.end());
+	setTextureWidth(2 * ceil(v->distanceTo()));
+}
+
 void UnionShape::add(ShapePointer t)
 {
 	auto c = t->vertices();
@@ -23,6 +29,7 @@ void UnionShape::add(ShapePointer t)
 		}
 	}
 	vc.r = max_distance + (*i)->vcenter().r;
+	updateTextureSide();
 }
 
 void UnionShape::render(void) const
@@ -37,7 +44,7 @@ void UnionShape::translate(double x, double y)
 	for (const auto& s: shapes) {
 		s->translate(x, y);
 	}
-	center.translate(x, y);
+	Shape::translate(x, y);
 }
 
 bool UnionShape::intersects(const Shape& t) const

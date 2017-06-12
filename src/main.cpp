@@ -7,6 +7,7 @@
 #include "ptexture.h"
 #include "ptimer.h"
 #include "stage.h"
+#include "geometry.h"
 
 size_t SCREEN_WIDTH  = 720;
 size_t SCREEN_HEIGHT = 720;
@@ -51,7 +52,7 @@ bool init(void)
 		= SDL_WINDOW_SHOWN
 		| SDL_WINDOW_BORDERLESS;
 
-	gWindow = SDL_CreateWindow("SDL Test",
+	gWindow = SDL_CreateWindow("Voronoi Engine " VERSION,
 			SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 			SCREEN_WIDTH, SCREEN_HEIGHT, window_flags);
 
@@ -80,8 +81,6 @@ bool init(void)
 					SDL_GetError());
 		}
 	}
-
-	SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xff);
 
 	// Initialize SDL_image.
 	auto img_flags
@@ -168,6 +167,7 @@ bool load_media(void)
 			b.texture->load(b.sprite_file, {255, 0, 0, 255});
 		}
 	}
+	fputs("\tLoaded Bullets.\n", stderr);
 
 	fputc('\n', stderr);
 	return true;
@@ -190,9 +190,8 @@ int main(int argc, const char **argv)
 	// Create game objects.
 	SDL_Event e;
 	PTimer    fpsTimer;
-	// SDL_Color textColor     = { 255, 0, 255 };
-	double    angle         = 0.0;
-	bool      user_quit     = false;
+	double    angle     = 0.0;
+	bool      user_quit = false;
 
 	double xd = +64 + SCREEN_WIDTH  / 2;
 	double yd = -64 + SCREEN_HEIGHT / 2;
@@ -221,6 +220,15 @@ int main(int argc, const char **argv)
 	player.sprite.setColor(48, 176, 255);
 	player.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 	std::stringstream logText;
+
+	// DEBUG: Shapes.
+	auto testAngle = 0.0;
+	auto test = Polygon(5, 2, (size_t) SCREEN_HEIGHT / 2);
+	// auto test = Ellipse(SCREEN_WIDTH / 3.0, SCREEN_HEIGHT / 5.0);
+	// auto test = Circle(SCREEN_HEIGHT / 4);
+	test.translate(SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0);
+
+	fputs("\nEntering Game Loop.\n", stderr);
 
 	// Main game loop.
 	fpsTimer.start();
@@ -311,7 +319,6 @@ int main(int argc, const char **argv)
 				[](Stage& s){ s.update(); });
 
 		// Move the player.
-		// player.move(timeStep);
 		player.move(1.0 / gFPS);
 
 		// Check player collision with scene objects.
@@ -337,8 +344,7 @@ int main(int argc, const char **argv)
 		gBgTexture.render(SCREEN_WIDTH  / 2, SCREEN_HEIGHT / 2, 1024, 1024,
 				NULL, angle, NULL, SDL_FLIP_NONE);
 
-		// angle += 2*M_PI / 64;
-		angle += (SCREEN_FPS / gFPS) * 2*M_PI / 64;
+		angle += (SCREEN_FPS / gFPS) * 2 * M_PI / 4096;
 
 		// Draw the player.
 		player.render();
@@ -363,6 +369,7 @@ int main(int argc, const char **argv)
 		}
 
 		// Log and developer information text.
+		roundedBoxRGBA(gRenderer, -64, -64, 194, 76, 64, 0, 0, 0, 127);
 		stringRGBA(gRenderer, 8, 8,  "Voronoi Engine " VERSION, 255, 255, 255, 255);
 
 		logText.str("");
@@ -396,6 +403,10 @@ int main(int argc, const char **argv)
 			<< "     Total: "
 			<< circles + rects;
 		stringRGBA(gRenderer, 8, 56, logText.str().c_str(), 255, 255, 255, 255);
+
+		// DEBUG: Shapes.
+		test.renderTexture(testAngle);
+		testAngle += M_PI / 2048;
 
 		// Update the screen.
 		SDL_RenderPresent(gRenderer);

@@ -20,6 +20,14 @@ struct Vertex
 
 	operator VoronoiVertex(void) const;
 
+	operator SDL_Point(void) const
+	{
+		SDL_Point p;
+		p.x = x;
+		p.y = y;
+		return p;
+	};
+
 	void translate(coord xoff, coord yoff)
 	{
 		x += xoff;
@@ -29,6 +37,26 @@ struct Vertex
 	{
 		translate(v.x, v.y);
 	};
+
+	bool operator<(const Vertex& b) const
+	{
+		return distanceTo(*this) < distanceTo(b);
+	}
+
+	bool operator<=(const Vertex& b) const
+	{
+		return distanceTo(*this) <= distanceTo(b);
+	}
+
+	bool operator>(const Vertex& b) const
+	{
+		return b < *this;
+	}
+
+	bool operator>=(const Vertex& b) const
+	{
+		return b <= *this;
+	}
 
 	const Vertex operator-(void) const
 	{
@@ -62,14 +90,25 @@ struct Vertex
 		return sqrt(dx*dx + dy*dy);
 	};
 
-	Vertex rotate(coord to, coord ox = 0.0, coord oy = 0.0) const
+	coord angleTo(const Vertex& t = { 0.0, 0.0 }) const
+	{
+		return atan2(t.y - y, t.x - x);
+	}
+
+	Vertex rotate(coord to, Vertex crot = {0.0, 0.0}) const
 	{
 		auto c = cos(to);
 		auto s = sin(to);
 		return Vertex{
-			(((x - ox) * c) - ((y - oy) * s)) + ox,
-			(((y - oy) * s) + ((y - oy) * c)) + oy
+			(((x - crot.x) * c) - ((y - crot.y) * s)) + crot.x,
+			(((x - crot.x) * s) + ((y - crot.y) * c)) + crot.y
 		};
+	};
+
+	Range project(coord on) const
+	{
+		auto p = distanceTo() * cos(on);
+		return Range(p, p);
 	};
 };
 COMMON_VERIFY(Vertex);
@@ -87,6 +126,16 @@ struct VoronoiVertex : Vertex
 		x(v.x), y(v.y), r(r) {}
 	VoronoiVertex(Vertex&& v, coord r = 0.0):
 		x(std::move(v.x)), y(std::move(v.y)), r(r) {}
+
+	void translate(coord xoff, coord yoff)
+	{
+		x += xoff;
+		y += xoff;
+	};
+	void translate(const VoronoiVertex& v)
+	{
+		translate(v.x, v.y);
+	};
 
 	const VoronoiVertex operator-(void) const
 	{
@@ -119,9 +168,15 @@ struct VoronoiVertex : Vertex
 		return std::max(distanceTo(t) - r, 0.0);
 	};
 
-	VoronoiVertex rotate(coord to, coord ox = 0.0, coord oy = 0.0) const
+	VoronoiVertex rotate(coord to, Vertex crot = {0.0, 0.0}) const
 	{
-		return { std::move(Vertex::rotate(to, ox, oy)), r };
+		return { std::move(Vertex::rotate(to, crot)), r };
+	};
+
+	Range project(coord on) const
+	{
+		auto c = distanceTo() * cos(on);
+		return Range(c - r, c + r);
 	};
 };
 COMMON_VERIFY(VoronoiVertex);

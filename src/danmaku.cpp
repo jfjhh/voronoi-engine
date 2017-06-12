@@ -87,35 +87,3 @@ Hitbox Danmaku::getHitbox(void) const
 	return u;
 }
 
-void Danmaku::start(void)
-{
-	PObject::start();
-	for (size_t i = 0; i < objects.size(); i++) {
-		objects[i]->start();
-	}
-}
-
-void Danmaku::stop(void)
-{
-	PObject::stop();
-	for (size_t i = 0; i < objects.size(); i++) {
-		objects[i]->stop();
-	}
-}
-
-void Danmaku::pause(void)
-{
-	PObject::pause();
-	for (size_t i = 0; i < objects.size(); i++) {
-		objects[i]->pause();
-	}
-}
-
-void Danmaku::unpause(void)
-{
-	PObject::unpause();
-	for (size_t i = 0; i < objects.size(); i++) {
-		objects[i]->unpause();
-	}
-}
-

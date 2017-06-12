@@ -70,36 +70,3 @@ void Stage::map(std::function<void(std::shared_ptr<PObject>,
 	}
 }
 
-void Stage::start(void)
-{
-	PObject::start();
-	for (size_t i = 0; i < objects.size(); i++) {
-		objects[i]->start();
-	}
-}
-
-void Stage::stop(void)
-{
-	PObject::stop();
-	for (size_t i = 0; i < objects.size(); i++) {
-		objects[i]->stop();
-	}
-}
-
-void Stage::pause(void)
-{
-	PObject::pause();
-	for (size_t i = 0; i < objects.size(); i++) {
-		objects[i]->pause();
-	}
-}
-
-void Stage::unpause(void)
-{
-	PObject::unpause();
-	for (size_t i = 0; i < objects.size(); i++) {
-		objects[i]->unpause();
-	}
-}
-
-

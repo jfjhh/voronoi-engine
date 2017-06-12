@@ -21,7 +21,9 @@ CXXOBJECTS = $(patsubst %.cpp, %.o, $(CXXSOURCES))
 
 # SDL Configuration.
 SDLCONFIG  = sdl2-config
-MACROS     = -DMEDIA_PATH=\"$(MEDIA_PATH)\" -DVERSION=\"$(VERSION)\"
+MACROS    := -DMEDIA_PATH=\"$(MEDIA_PATH)\"
+MACROS    += -DVERSION=\"$(VERSION)\"
+MACROS    += -DCOMMONT_CHECKS
 # CXXFLAGS   = -g -Wall -Werror -O2 -std=c++11 $(MACROS)
 CXXFLAGS   = -g -Wall -Werror -pedantic -Og -std=c++11 $(MACROS)
 CPPFLAGS  := $(shell $(SDLCONFIG) --cflags)

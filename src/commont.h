@@ -8,6 +8,7 @@
 
 #include <type_traits>
 
+#ifdef COMMONT_CHECKS
 #define COMMON_VERIFY_BASIC(CLASS) \
 static_assert(std::is_destructible< CLASS >(), \
 		"COMMON: " #CLASS " objects are not destructible!")
@@ -25,6 +26,11 @@ static_assert(std::is_copy_constructible< CLASS >(), \
 		"COMMON: " #CLASS " objects are not copy-constructible!"); \
 static_assert(std::is_copy_assignable< CLASS >(), \
 		"COMMON: " #CLASS " objects are not copy-assignable!")
+#else /* COMMONT_CHECKS */
+#define COMMON_VERIFY_BASIC(CLASS)
+#define COMMON_VERIFY_MOVE(CLASS)
+#define COMMON_VERIFY(CLASS)
+#endif /* COMMONT_CHECKS */
 
 namespace voronoi
 {

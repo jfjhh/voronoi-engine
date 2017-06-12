@@ -15,7 +15,8 @@ class Point : virtual public Shape
 		Point(const Point& p) = default;
 		Point& operator=(const Point& p) = default;
 
-		Point(Point&& p)
+		Point(Point&& p):
+			Shape()
 		{
 			chull  = std::move(p.vertices());
 			vhull  = std::move(p.voronoiVertices());

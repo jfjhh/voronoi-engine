@@ -1,9 +1,8 @@
 #include "point.h"
 
-Point::Point(coord x, coord y)
+Point::Point(coord x, coord y):
+	Shape()
 {
-	t      = 0.0;
-	center = {x, y};
 	chull.push_back(center);
 	vhull.push_back(center);
 }
