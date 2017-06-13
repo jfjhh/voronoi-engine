@@ -1,41 +1,36 @@
 #include "bulletdata.h"
 
-static std::vector<SDL_Rect> NONE_RECTS   = std::vector<SDL_Rect>();
-static std::vector<Circle>   NONE_CIRCLES = std::vector<Circle>();
-
-static std::vector<SDL_Rect> CIRCLE_RECTS = NONE_RECTS;
-static std::vector<Circle> CIRCLE_CIRCLES = {
-	{0, 0, 5},
-};
-
-static std::vector<SDL_Rect> RECT_RECTS = {
-	{-5, -5, 10, 10},
-};
-static std::vector<Circle> RECT_CIRCLES = NONE_CIRCLES;
-
 static BulletData none = {
 	BulletType::NONE,
 	"",
-	Hitbox(NONE_RECTS, NONE_CIRCLES),
-	std::make_shared<PTexture>(),
+	nullptr,
+	nullptr,
+};
+
+static BulletData point = {
+	BulletType::POINT,
+	"",
+	std::make_shared<Point>(),
+	nullptr,
 };
 
 static BulletData circle = {
 	BulletType::CIRCLE,
 	"circle.png",
-	Hitbox(CIRCLE_RECTS, CIRCLE_CIRCLES),
+	std::make_shared<Circle>(5.0),
 	std::make_shared<PTexture>(),
 };
 
 static BulletData rect = {
 	BulletType::RECT,
 	"rect.png",
-	Hitbox(RECT_RECTS, RECT_CIRCLES),
+	std::make_shared<Rectangle>(10.0),
 	std::make_shared<PTexture>(),
 };
 
 std::array<BulletData, BULLET_DATA_MAX> BULLETS = {
 	none,
+	point,
 	circle,
 	rect,
 };

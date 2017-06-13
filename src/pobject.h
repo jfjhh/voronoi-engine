@@ -11,7 +11,9 @@
 #include <vector>
 #include "common.h"
 #include "ptexture.h"
-#include "hitbox.h"
+#include "geometry.h"
+
+#include "bulletdata.h" // DEBUG
 
 class PObject
 {
@@ -38,6 +40,11 @@ class PObject
 		 */
 		bool     die;     /**< After ttl, should the object die or stop?    */
 		double   ttl;     /**< How long until the object's motion stops.    */
+		bool     hurt;    /**< Effect the player?                           */
+		bool     just;    /**< Effect enemies?                              */
+
+		std::shared_ptr<PObject> parent;
+		std::shared_ptr<Shape>   shape;
 
 		/**
 		 * Initializes the object.
@@ -68,6 +75,12 @@ class PObject
 			aamax(aamax),
 			die(die),
 			ttl(ttl),
+			hurt(true),
+			just(false),
+			parent(nullptr),
+			// shape(BULLETS[1].shape),
+			// texture(BULLETS[1].texture) {}
+			shape(nullptr),
 			texture(nullptr) {}
 
 		/**
@@ -86,6 +99,11 @@ class PObject
 		virtual void update(void);
 
 		/**
+		 * Checks if a shape intersects the object.
+		 */
+		virtual bool intersects(const Shape& s) const;
+
+		/**
 		 * Renders the object's objects.
 		 */
 		virtual void render(double xoff = 0, double yoff = 0) const = 0;
@@ -93,36 +111,16 @@ class PObject
 		/**
 		 * Offsets an object's position.
 		 */
-		virtual void translate(double dx, double dy);
+		virtual double transX(void) const;
+		virtual double transY(void) const;
 
-		/**
-		 * Sets an object's hitbox.
-		 */
-		void setHitbox(Hitbox h);
-
-		/**
-		 * Gets an object's hitbox(es).
-		 */
-		virtual Hitbox getHitbox(void) const;
-
-		/**
-		 * Get the timer's time.
-		 */
-		double getTime(void) const;
-
-	private:
-		/**
-		 * A default empty texture.
-		 */
-		// static PTexture NO_TEXTURE;
+		virtual VoronoiVertex vpos(void) const;
 
 	protected:
 		/**
 		 * Game display and logic variables.
 		 */
-		Hitbox                    hitbox;  /**< The object's hitbox(es).  */
 		std::shared_ptr<PTexture> texture; /**< A pointer to the texture. */
-		// PTexture &texture;
 };
 
 #endif /* POBJECT_H */

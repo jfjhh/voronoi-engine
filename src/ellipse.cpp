@@ -7,7 +7,7 @@ Ellipse::Ellipse(coord rx, coord ry, coord x, coord y, coord t):
 	center.x = x;
 	center.y = y;
 	chull.push_back(center);
-	vhull.push_back(center);
+	setTextureWidth(2.0 * std::max(rx, ry) + 1.0);
 }
 
 bool Ellipse::intersects(const Shape& t) const
@@ -27,7 +27,7 @@ void Ellipse::render(void) const
 {
 	auto x = (textureSide / 2);
 	auto y = (textureSide / 2);
-	ellipseRGBA(gRenderer, x, y, rx, ry, 255, 255, 255, 255);
+	filledEllipseRGBA(gRenderer, x, y, rx, ry, 255, 255, 255, 127);
 }
 
 Range Ellipse::project(coord on) const

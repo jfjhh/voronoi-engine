@@ -18,7 +18,23 @@ class Bullet : public PObject
 		/**
 		 * A bullet can be constructed just like an object.
 		 */
-		using PObject::PObject;
+		Bullet(
+				double x     = SCREEN_WIDTH  / 2,
+				double y     = SCREEN_HEIGHT / 2,
+				double t     = 0,
+				double v     = 0,
+				double w     = 0,
+				double a     = 0,
+				double aa    = 0,
+				bool   die   = true,
+				double vmax  = 1e6,
+				double wmax  = 1e6,
+				double amax  = 1e6,
+				double aamax = 1e6,
+				double ttl   = 1e6):
+			PObject(x, y, t, v, w, a, aa, die, vmax, wmax, amax, aamax, ttl) {
+				setType(BulletType::NONE);
+			};
 
 		/**
 		 * Renders the bullet.

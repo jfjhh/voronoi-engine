@@ -4,44 +4,55 @@ Shape::Shape(coord tw)
 {
 	t = 0.0;
 	center = {0.0, 0.0, tw / 2.0};
+	vhull.push_back(center);
 	shapeTexture = std::make_shared<PTexture>();
-	setTextureWidth(tw + 1.0);
 }
 
 Shape::Shape(coord tw, coord th): Shape(std::max(tw, th)) {}
 
 void Shape::translate(coord x, coord y)
 {
-	for (auto&& v: chull) {
-		v.translate(Vertex{x, y});
-	}
-	for (auto&& v: vhull) {
-		v.translate(VoronoiVertex{x, y});
-	}
+	// for (auto&& v: chull) {
+	// 	v.translate(Vertex{x, y});
+	// }
+	// for (auto&& v: vhull) {
+	// 	v.translate(VoronoiVertex{x, y});
+	// }
 	center.translate(VoronoiVertex{x, y});
 }
 
 void Shape::render(void) const
 {
+	fputs("<SHAPE native point render>\n", stderr);
 	for (const auto& v: chull) {
-		pixelRGBA(gRenderer, v.x, v.y, 255, 255, 255, 255);
+		filledCircleRGBA(gRenderer, v.x, v.y, 5, 255, 255, 255, 255);
 	}
 	for (const auto& v: vhull) {
-		circleRGBA(gRenderer, v.x, v.y, v.r, 255, 255, 255, 255);
+		filledCircleRGBA(gRenderer, v.x, v.y, v.r, 255, 255, 255, 255);
 	}
 }
 
-void Shape::renderTexture(coord add_rot) const
+void Shape::renderTargeted(void)
 {
 	if (!textureOK) return;
+	fprintf(stderr, "<Rendering a %s to shape internal target texture>\n",
+			typeid(*this).name() + 1);
 	SDL_Texture *old = shapeTexture->setRenderTarget();
 	SDL_SetRenderDrawColor(gRenderer, 0xff, 0xff, 0xff, 0x00);
+	// SDL_SetRenderDrawColor(gRenderer, 0xff, 0x00, 0xff, 0x44);
 	SDL_RenderClear(gRenderer);
 
 	render();
 
 	SDL_SetRenderTarget(gRenderer, old);
-	shapeTexture->render(center.x, center.y, NULL, t + add_rot, NULL, SDL_FLIP_NONE);
+}
+
+void Shape::renderTexture(coord x, coord y, coord add_rot)
+{
+	if (textureOK) {
+		shapeTexture->render(
+				x + center.x, y + center.y, NULL, t + add_rot, NULL, SDL_FLIP_NONE);
+	}
 }
 
 bool Shape::setTextureWidth(int tw)
@@ -52,8 +63,15 @@ bool Shape::setTextureWidth(int tw)
 
 bool Shape::renewTexture(void)
 {
-	return textureOK = shapeTexture->createBlank(
+	if (!gRenderer) return false;
+	fprintf(stderr,"<Renewing a %s's\ttexture (%3d) ... ",
+			typeid(*this).name() + 1,
+			textureSide);
+	textureOK = shapeTexture->createBlank(
 			(int) textureSide, (int) textureSide, SDL_TEXTUREACCESS_TARGET);
+	fputs(textureOK ? "Done!>\t" : "Renderer Not Ready!>\n", stderr);
+	renderTargeted();
+	return textureOK;
 }
 
 bool Shape::textureStatus(void)
@@ -90,6 +108,11 @@ Range Shape::project(coord on) const
 	}
 
 	return r;
+}
+
+void Shape::setVCenter(const VoronoiVertex& v)
+{
+	center = v;
 }
 
 VoronoiVertex Shape::vcenter(void) const

@@ -16,37 +16,18 @@ class Rectangle : virtual public Shape
 		coord w, h, hw, hh;
 
 	public:
-		Rectangle(coord w = 1.0,  coord h = 1.0,
-				coord x   = 0.0,  coord y = 0.0, coord t = 0.0);
+		Rectangle(coord w,  coord h,
+				coord x = 0.0,  coord y = 0.0, coord t = 0.0);
 
-		Rectangle(coord w = 1.0, coord x = 0.0,  coord y = 0.0, coord t = 0.0):
-			Shape(w, w) { Rectangle(w, w, x, y, t); }
+		Rectangle(coord w = 1.0): Rectangle(w, w, 0.0, 0.0, 0.0) {};
 
 		Rectangle(const Rectangle& p) = default;
 		Rectangle& operator=(const Rectangle& p) = default;
 
-		Rectangle(Rectangle&& p):
-			Shape(p.width(), p.height())
-		{
-			chull  = std::move(p.vertices());
-			vhull  = std::move(p.voronoiVertices());
-			center = p.vcenter();
-			t      = p.angle();
-			w      = p.width();
-			h      = p.height();
-		}
-		Rectangle& operator=(Rectangle&& p)
-		{
-			chull  = std::move(p.vertices());
-			vhull  = std::move(p.voronoiVertices());
-			center = p.vcenter();
-			t      = p.angle();
-			w      = p.width();
-			h      = p.height();
-			return *this;
-		}
+		operator SDL_Rect();
 
 		bool intersects(const Shape& s) const final override;
+		bool intersects(const VoronoiVertex& v) const;
 		void render(void) const override;
 
 		coord width(void)   const;

@@ -10,7 +10,8 @@
 class Point : virtual public Shape
 {
 	public:
-		Point(coord x, coord y);
+		Point(coord x = 0.0, coord y = 0.0);
+		Point(Vertex v);
 
 		Point(const Point& p) = default;
 		Point& operator=(const Point& p) = default;

@@ -16,8 +16,9 @@ void Stage::free(void)
 
 void Stage::addPObject(std::shared_ptr<PObject> d)
 {
-	d->translate(x, y);
-	objects.push_back(d);
+	if (d) {
+		objects.push_back(d);
+	}
 }
 
 void Stage::update(void)
@@ -27,18 +28,19 @@ void Stage::update(void)
 		(*it)->update();
 	}
 
-	auto it = std::remove_if(objects.begin(), objects.end(),
-			[](std::shared_ptr<PObject> o)
-			{
-			SDL_Rect field = {
-			0,            0,
-			(int) SCREEN_WIDTH, (int) SCREEN_HEIGHT,
-			};
-			Hitbox f;
-			f.add(field);
-			return !f.intersects(o->getHitbox());
-			});
-	objects.erase(it, objects.end());
+	// const auto& s = shape;
+	// auto it = std::remove_if(objects.begin(), objects.end(),
+	// 		[s](std::shared_ptr<PObject> o)
+	// 		{
+	// 		auto t = o->shape;
+	// 		if (t) {
+	// 		// t->translate(o->x, o->y);
+	// 		fprintf(stderr, "<<OUT? (%f, %f)>>\r", o->x, o->y);
+	// 		return !s->intersects(*t);
+	// 		}
+	// 		return false;
+	// 		});
+	// objects.erase(it, objects.end());
 }
 
 void Stage::render(double xoff, double yoff) const
@@ -50,15 +52,12 @@ void Stage::render(double xoff, double yoff) const
 				y + yoff - (texture->sheight() / 2));
 	}
 
-	// Render the stage's hitbox.
-	SDL_SetRenderDrawColor(gRenderer, 0x00, 0xff, 0xff, 0xff);
-	Hitbox h = hitbox;
-	h.translate(x + xoff, y + yoff);
-	h.render();
+	shape->renderTexture();
 
 	// Render the stage's objects.
 	for (size_t i = 0; i < objects.size(); i++) {
-		objects[i]->render(x + xoff, y + yoff);
+		// objects[i]->render(x + xoff, y + yoff);
+		objects[i]->render();
 	}
 }
 

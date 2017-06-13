@@ -15,6 +15,7 @@ size_t SCREEN_FPS    = 60;
 size_t GFX_FPS       = SCREEN_FPS;
 double SCREEN_TICKS  = 1e3 / SCREEN_FPS;
 double gFPS          = (double) SCREEN_FPS;
+double gTimeStep     = 1.0 / gFPS;
 
 SDL_Window   *gWindow   = NULL;
 SDL_Renderer *gRenderer = NULL;
@@ -26,7 +27,7 @@ PTexture   gBgTexture;
 // PTexture   gFPSTexture;
 FPSmanager gFPSManager;
 
-std::vector<Stage> gStages;
+std::vector<std::shared_ptr<Stage>> gStages;
 
 bool init(void)
 {
@@ -107,8 +108,8 @@ bool init(void)
 void quit(int status)
 {
 	// Free stages.
-	for (auto&& s: gStages) {
-		s.free();
+	for (const auto& s: gStages) {
+		s->free();
 	}
 
 	// Free surfaces.
@@ -120,8 +121,10 @@ void quit(int status)
 	// gTextTexture.free();
 	// gFPSTexture.free();
 	for (auto&& b: BULLETS) {
-		b.texture->free();
-		b.texture.reset();
+		if (b.texture) {
+			b.texture->free();
+			b.texture.reset();
+		}
 	}
 
 	// Destroy renderer.
@@ -162,12 +165,19 @@ bool load_media(void)
 	}
 
 	// Load the bullet textures.
+	fputs("\tLoading Bullets ... \n", stderr);
 	for (auto& b: BULLETS) {
 		if (strlen(b.sprite_file) > 0) {
 			b.texture->load(b.sprite_file, {255, 0, 0, 255});
+
+			// For fun.
+			b.texture->setBlendMode(SDL_BLENDMODE_ADD);
+		}
+		if (b.shape) {
+			b.shape->renewTexture();
 		}
 	}
-	fputs("\tLoaded Bullets.\n", stderr);
+	fputs("Done!\n", stderr);
 
 	fputc('\n', stderr);
 	return true;
@@ -190,42 +200,40 @@ int main(int argc, const char **argv)
 	// Create game objects.
 	SDL_Event e;
 	PTimer    fpsTimer;
+	std::stringstream logText;
 	double    angle     = 0.0;
 	bool      user_quit = false;
 
 	double xd = +64 + SCREEN_WIDTH  / 2;
 	double yd = -64 + SCREEN_HEIGHT / 2;
-	auto d = std::make_shared<Danmaku>(
+	auto d = std::make_shared<Bullet>(
 			xd, yd,
 			M_PI / 4,
 			830, 10,
-			0,  0,
-			true);
-
-	for (double t = 2 * M_PI / 6; t < 2 * M_PI; t += 2 * M_PI / 6) {
-		double xp = 128 * cos(t);
-		double yp = 128 * sin(t);
-		auto b    = std::make_shared<Danmaku>(xp, yp, t, 15*t, 1*t, 0, 0);
-		d->addPObject(b);
-	}
+			0,  0);
 
 	// Add the danmaku to a stage.
-	Stage s1;
-	s1.addPObject(d);
+	auto s1 = std::make_shared<Stage>();
+
 	gStages.push_back(s1);
+	s1->addPObject(d);
 
 	// Create the player.
+	fputs("\tCreating Player ... ", stderr);
 	Player player("player_sprites.png");
+	player.objectShape().renewTexture();
 	player.sprite.setSprite(Player::Sprite::CENTER);
 	player.sprite.setColor(48, 176, 255);
-	player.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-	std::stringstream logText;
+	player.setPosition(SCREEN_WIDTH / 2, 4 * SCREEN_HEIGHT / 5);
+	fputs("Done!\n", stderr);
 
 	// DEBUG: Shapes.
 	auto testAngle = 0.0;
-	auto test = Polygon(5, 2, (size_t) SCREEN_HEIGHT / 2);
+	fputs("\tCreating test shape.\n", stderr);
+	auto test = Polygon(16, 3, (size_t) SCREEN_HEIGHT / 2);
 	// auto test = Ellipse(SCREEN_WIDTH / 3.0, SCREEN_HEIGHT / 5.0);
 	// auto test = Circle(SCREEN_HEIGHT / 4);
+	// auto test = Rectangle(SCREEN_WIDTH / 3.0, SCREEN_HEIGHT / 5.0);
 	test.translate(SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0);
 
 	fputs("\nEntering Game Loop.\n", stderr);
@@ -244,6 +252,7 @@ int main(int argc, const char **argv)
 		if (std::isnan(gFPS) || gFPS == 0.0) {
 			gFPS = SCREEN_FPS;
 		}
+		gTimeStep = 1.0 / gFPS;
 
 		// Handle events on queue.
 		while (SDL_PollEvent(&e)) {
@@ -286,51 +295,49 @@ int main(int argc, const char **argv)
 			}
 		}
 
-		// Add more bullets!
-		if (countedFrames % 2 == 0) {
-			auto n = std::make_shared<Bullet>(
-					0, 0,
-					player.angleFrom(d->x, d->y),
-					0.1, 0,
-					-0.01, 0);
-			n->setType(BulletType::RECT);
-			d->addPObject(n);
-		}
+		// if (countedFrames % 10 == 0) {
+		// 	auto bl = std::make_shared<Bullet>(
+		// 			SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
+		// 			M_PI / 8,
+		// 			10, -2,
+		// 			20,  0,
+		// 			true);
+		// 	bl->setType(BulletType::RECT);
+		// 	s1->addPObject(bl);
+		// }
 
 		if (countedFrames % 5 == 0) {
-			d->map([d](std::shared_ptr<PObject> obj, std::shared_ptr<Danmaku> dobj, size_t di)
-					{
-					if (dobj) {
-					for (double a = 2 * M_PI / 6; a < 2 * M_PI; a += 2 * M_PI / 6) {
-					auto q = std::make_shared<Bullet>(
-							d->x, d->y,
-							(dobj->t)*a,
-							15, 0,
-							-1, 0);
-					q->setType(BulletType::CIRCLE);
-					dobj->addPObject(q);
-					}
-					}
-					});
+			for (double a = 2 * M_PI / 6; a < 2 * M_PI; a += 2 * M_PI / 6) {
+				auto q = std::make_shared<Bullet>(
+						d->x, d->y,
+						a,
+						30, 1,
+						20, 0);
+				q->setType(BulletType::CIRCLE);
+				s1->addPObject(q);
+			}
 		}
 
-		// Update the stage.
-		std::for_each(gStages.begin(), gStages.end(),
-				[](Stage& s){ s.update(); });
+		// Update the stages.
+		for (auto&& s: gStages) {
+			s->update();
+		}
 
 		// Move the player.
 		player.move(1.0 / gFPS);
 
 		// Check player collision with scene objects.
-		Hitbox dh = d->getHitbox();
-		Hitbox ph = player.hitbox();
-		if (player.hitbox().intersects(dh)) {
+		Shape &ph = player.objectShape();
+		if (s1->intersects(ph)) {
 			hit = true;
 			player.sprite.setColor(255, 128, 192);
 		} else {
 			hit = false;
 			player.sprite.setColor(48, 176, 255);
 		}
+		// auto pvcenter = ph.vcenter();
+		// fprintf(stderr, "\tPlayer Center: (%f, %f) -> (%f, %f).\r",
+		// 		pvcenter.x, pvcenter.y, player.getX(), player.getY());
 
 		// Clear the screen.
 		SDL_SetRenderDrawColor(gRenderer, 0x88, 0x88, 0x88, 0xff);
@@ -349,14 +356,10 @@ int main(int argc, const char **argv)
 		// Draw the player.
 		player.render();
 
-		// Draw the stage.
-		std::for_each(gStages.begin(), gStages.end(),
-				[](Stage& s){ s.render(); });
-
-		// Draw text.
-		// gTextTexture.render(SCREEN_WIDTH / 2, 36);
-		// gFPSTexture.render((SCREEN_WIDTH + gFPSTexture.width()) / 2,
-		// 		SCREEN_HEIGHT - gFPSTexture.height() / 2);
+		// Draw the stages.
+		for (auto&& s: gStages) {
+			s->render();
+		}
 
 		// Draw a crosshair line of dots.
 		for (size_t i = 0; i < SCREEN_HEIGHT; i += 3)
@@ -384,28 +387,28 @@ int main(int argc, const char **argv)
 			<< (hit ? "Hit" : "OK");
 		stringRGBA(gRenderer, 8, 32, logText.str().c_str(), 255, 255, 255, 255);
 
-		int rects = (int) (ph.getRects().size() + dh.getRects().size());
-		logText.str("");
-		logText
-			<< "Rectangles: "
-			<< rects;
-		stringRGBA(gRenderer, 8, 40, logText.str().c_str(), 255, 255, 255, 255);
+		// int rects = (int) (ph.getRects().size() + sh.getRects().size());
+		// logText.str("");
+		// logText
+		// 	<< "Rectangles: "
+		// 	<< rects;
+		// stringRGBA(gRenderer, 8, 40, logText.str().c_str(), 255, 255, 255, 255);
 
-		int circles = (int) (ph.getCircles().size() + dh.getCircles().size());
-		logText.str("");
-		logText
-			<< "   Circles: "
-			<< circles;
-		stringRGBA(gRenderer, 8, 48, logText.str().c_str(), 255, 255, 255, 255);
+		// int circles = (int) (ph.getCircles().size() + sh.getCircles().size());
+		// logText.str("");
+		// logText
+		// 	<< "   Circles: "
+		// 	<< circles;
+		// stringRGBA(gRenderer, 8, 48, logText.str().c_str(), 255, 255, 255, 255);
 
 		logText.str("");
 		logText
 			<< "     Total: "
-			<< circles + rects;
+			<< s1->objects.size();
 		stringRGBA(gRenderer, 8, 56, logText.str().c_str(), 255, 255, 255, 255);
 
 		// DEBUG: Shapes.
-		test.renderTexture(testAngle);
+		// test.renderTexture(testAngle);
 		testAngle += M_PI / 2048;
 
 		// Update the screen.

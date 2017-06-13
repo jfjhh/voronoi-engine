@@ -4,7 +4,13 @@ Point::Point(coord x, coord y):
 	Shape()
 {
 	chull.push_back(center);
-	vhull.push_back(center);
+	setTextureWidth(5.0);
+}
+
+Point::Point(Vertex v):
+	Shape()
+{
+	chull.push_back({v.x, v.y});
 }
 
 bool Point::intersects(const Shape& t) const
@@ -20,6 +26,8 @@ bool Point::intersects(const Point& t) const
 
 void Point::render(void) const
 {
-	pixelRGBA(gRenderer, center.x, center.y, 255, 0, 255, 255);
+	auto x = (textureSide / 2);
+	auto y = (textureSide / 2);
+	filledCircleRGBA(gRenderer, x, y, 2, 255, 255, 255, 255);
 }
 

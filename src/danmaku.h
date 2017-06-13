@@ -13,14 +13,24 @@
 
 class Danmaku : public PObject
 {
-	private:
-		std::vector<std::shared_ptr<PObject>> objects;
-
 	public:
-		/**
-		 * A danmaku can be constructed just like an object.
-		 */
-		using PObject::PObject;
+		std::vector<std::shared_ptr<PObject>> objects;
+		Danmaku(double x     = SCREEN_WIDTH  / 2,
+				double y     = SCREEN_HEIGHT / 2,
+				double t     = 0,
+				double v     = 0,
+				double w     = 0,
+				double a     = 0,
+				double aa    = 0,
+				bool   die   = true,
+				double vmax  = 1e6,
+				double wmax  = 1e6,
+				double amax  = 1e6,
+				double aamax = 1e6,
+				double ttl   = 1e6):
+			PObject(x, y, t, v, w, a, aa, die, vmax, wmax, amax, aamax, ttl) {
+				shape = std::make_shared<UnionShape>();
+			}
 
 		/**
 		 * Destroys the danmaku.
@@ -43,6 +53,11 @@ class Danmaku : public PObject
 		virtual void update(void) override;
 
 		/**
+		 * Checks if a shape intersects the bullets in the danmaku.
+		 */
+		virtual bool intersects(const Shape& s) const override;
+
+		/**
 		 * Renders the danmaku's objects.
 		 */
 		virtual void render(double xoff = 0, double yoff = 0) const override;
@@ -50,18 +65,13 @@ class Danmaku : public PObject
 		/**
 		 * Offsets an object's position.
 		 */
-		virtual void translate(double dx, double dy);
+		// virtual void translate(double dx, double dy);
 
 		/**
 		 * Maps a function over a danmaku's objects.
 		 */
 		void map(std::function<void(std::shared_ptr<PObject>,
 					std::shared_ptr<Danmaku>, size_t)> f);
-
-		/**
-		 * Gets the union hitbox of the danmaku's hitboxes.
-		 */
-		virtual Hitbox getHitbox(void) const override;
 };
 
 #endif /* DANMAKU_H */

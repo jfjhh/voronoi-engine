@@ -27,6 +27,8 @@ class Shape
 		VoronoiVertex   center;
 		coord t; /**< Angle of shape. */
 
+		void renderTargeted(void);
+
 	public:
 		Shape(coord tw = 0.0);
 		Shape(coord tw, coord th);
@@ -35,7 +37,9 @@ class Shape
 		virtual bool intersects(const Shape& t) const = 0;
 		virtual void render(void) const;
 
-		virtual void renderTexture(coord add_rot = 0.0) const;
+		void renderTexture(coord x, coord y, coord add_rot = 0.0);
+		void renderTexture(Vertex v) { renderTexture(v.x, v.y); };
+		void renderTexture(coord add_rot = 0.0) { renderTexture(0.0, 0.0, add_rot); };
 		bool setTextureWidth(int tw);
 		bool renewTexture(void);
 		bool textureStatus(void);
@@ -47,6 +51,7 @@ class Shape
 		virtual Range projectOn(coord axis = 0.0) const;
 		virtual Range project(coord on = 0.0) const;
 
+		virtual void setVCenter(const VoronoiVertex& v);
 		VoronoiVertex vcenter(void) const;
 		virtual ConvexHull  vertices(void) const;
 		virtual VoronoiHull voronoiVertices(void) const;

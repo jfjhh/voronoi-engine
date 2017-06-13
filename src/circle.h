@@ -23,12 +23,14 @@ class Circle : public Ellipse
 		bool intersects(const Circle& t) const;
 		void render(void) const final override;
 		Range project(coord on) const final override;
+
+		// Circles are invariant under rotation, so do not waste time with
+		// rotating them.
+		void setAngle(coord to) final override {};
+
 		coord radius(void) const;
 };
 COMMON_VERIFY(Circle);
-
-bool Circle_HasIntersection(const Circle *a, const Circle *b);
-bool Circle_HasIntersection(const Circle *a, const SDL_Rect *b);
 
 #endif /* CIRCLE_H */
 

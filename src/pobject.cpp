@@ -7,14 +7,14 @@ PObject::~PObject()
 
 void PObject::free(void)
 {
-	// Not needed because the texture is a reference.
+	// Not needed because the texture is a std::shared_ptr.
 	// texture->free();
 }
 
 void PObject::update(void)
 {
 	// Get time.
-	double time = getTime();
+	auto time = gTimeStep;
 
 	// Update linear velocity.
 	v += a  * time;
@@ -27,33 +27,43 @@ void PObject::update(void)
 	// Update angle.
 	t += w * time;
 
+	auto xo = 0.0;
+	auto yo = 0.0;
+	if (parent != nullptr) {
+		xo = x;
+		yo = y;
+		x = 0;
+		y = 0;
+		// x = parent->transX();
+		// y = parent->transY();
+	}
+
 	// Update x position.
 	x += v * cos(t) * time;
 
 	// Update y position.
 	y += v * sin(t) * time;
+
+	x += xo;
+	y += yo;
 }
 
-void PObject::translate(double dx, double dy)
+bool PObject::intersects(const Shape& s) const
 {
-	x += dx;
-	y += dy;
+	return shape->intersects(s);
 }
 
-void PObject::setHitbox(Hitbox h)
+double PObject::transX(void) const
 {
-	hitbox = h;
+	return (parent == nullptr ? x : x + parent->transX());
+}
+double PObject::transY(void) const
+{
+	return (parent == nullptr ? y : y + parent->transY());
 }
 
-Hitbox PObject::getHitbox(void) const
+VoronoiVertex PObject::vpos(void) const
 {
-	Hitbox h = hitbox;
-	h.translate(x, y);
-	return h;
-}
-
-double PObject::getTime(void) const
-{
-	return 1.0 / gFPS;
+	return { x, y, shape->vcenter().r };
 }
 

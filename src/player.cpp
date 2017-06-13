@@ -1,5 +1,7 @@
 #include "player.h"
 
+std::shared_ptr<Shape> Player::shape = std::make_shared<Circle>(5.0);
+
 Player::~Player()
 {
 	sprite.free();
@@ -109,11 +111,11 @@ void Player::move(double time)
 	y = std::max(std::min(y, SCREEN_HEIGHT - hh), hh);
 }
 
-void Player::render(void) const
+void Player::render(void)
 {
 	SDL_SetRenderDrawColor(gRenderer, 0x00, 0xff, 0x00, 0xff);
 	sprite.render(x, y);
-	hbox.render();
+	shape->renderTexture(x, y);
 }
 
 double Player::angleFrom(double xf, double yf) const
@@ -121,11 +123,9 @@ double Player::angleFrom(double xf, double yf) const
 	return atan2(y - yf, x - xf);
 }
 
-Hitbox Player::hitbox(void) const
+Shape& Player::objectShape(void) const
 {
-	Hitbox h = hbox;
-	h.translate(x, y);
-	return h;
+	return *shape;
 }
 
 double Player::getX(void) const

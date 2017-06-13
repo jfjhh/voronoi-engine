@@ -98,12 +98,19 @@ bool PTexture::createBlank(
 		int width, int height,
 		SDL_TextureAccess access)
 {
+	if (!gRenderer || width <= 0 || height <= 0) {
+		texture = NULL;
+		return false;
+	}
 	texture = SDL_CreateTexture(
 			gRenderer, SDL_PIXELFORMAT_RGBA8888, access, width, height);
 	setBlendMode(SDL_BLENDMODE_BLEND);
 	if (texture) {
 		w = width;
 		h = height;
+	} else {
+		fprintf(stderr, "Could not create blank texture! SDL Error: %s\n",
+				SDL_GetError());
 	}
 
 	return (texture != NULL);

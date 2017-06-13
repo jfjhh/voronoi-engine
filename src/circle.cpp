@@ -23,7 +23,7 @@ void Circle::render(void) const
 {
 	auto x = (textureSide / 2);
 	auto y = (textureSide / 2);
-	circleRGBA(gRenderer, x, y, rx, 255, 255, 255, 255);
+	filledCircleRGBA(gRenderer, x, y, rx, 255, 255, 255, 127);
 }
 
 coord Circle::radius(void) const

@@ -20,6 +20,7 @@ Polygon::Polygon(size_t n, size_t s, coord r):
 	Shape(),
 	UnionShape()
 {
+	fputs("(Constructing polygram.)", stderr);
 	if (n < 3 || 1 > s || s >= n || r <= 0) {
 		throw;
 	}
@@ -31,7 +32,7 @@ Polygon::Polygon(size_t n, size_t s, coord r):
 		v.push_back(Vertex{r * cos(t), r * sin(t)});
 	}
 
-	*this = std::move(Polygon{std::move(v)});
+	chull = std::move(v);
 	updateTextureSide();
 }
 
@@ -76,8 +77,8 @@ void Polygon::render(void) const
 	auto itx   = xs.begin();
 	auto ity   = ys.begin();
 	for (const auto& v: verts) {
-		*itx++ = v.x;
-		*ity++ = v.y;
+		*itx++ = v.x + (textureSide / 2);
+		*ity++ = v.y + (textureSide / 2);
 	}
 	filledPolygonRGBA(gRenderer, xs.data(), ys.data(), size, 255, 255, 255, 63);
 }

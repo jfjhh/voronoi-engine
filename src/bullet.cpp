@@ -3,13 +3,22 @@
 void Bullet::render(double xoff, double yoff) const
 {
 	// Render the bullet's texture.
-	texture->render(x, y);
+	if (texture) {
+		if (parent) {
+			texture->render(x + parent->transX(), y + parent->transY());
+		} else {
+			texture->render(x, y);
+		}
+	}
 
-	// Render the bullet's hitbox.
-	SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0xff, 0xff);
-	Hitbox h = hitbox;
-	h.translate(x, y);
-	h.render();
+	// Render the bullet's shape.
+	if (shape && !texture) {
+		if (parent) {
+			shape->renderTexture(x + parent->transX(), y + parent->transY());
+		} else {
+			shape->renderTexture(x, y);
+		}
+	}
 }
 
 void Bullet::setType(BulletType t)
@@ -17,7 +26,8 @@ void Bullet::setType(BulletType t)
 	for (const auto& b: BULLETS) {
 		if (b.type == t) {
 			texture = b.texture;
-			hitbox  = b.hitbox;
+			shape   = b.shape;
+			return;
 		}
 	}
 }

@@ -8,7 +8,8 @@
 
 #include "common.h"
 #include "ptexture.h"
-#include "hitbox.h"
+#include "shape.h"
+#include "circle.h"
 
 class Player
 {
@@ -18,7 +19,7 @@ class Player
 		bool   focused;
 		int    xmotion, ymotion;
 		bool   up_last, left_last, up, down, left, right;
-		Hitbox hbox;
+		static std::shared_ptr<Shape> shape;
 
 	public:
 		enum Sprite : int {
@@ -43,8 +44,6 @@ class Player
 			ymotion(0) {
 				sprite.load(sprite_filename);
 				sprite.setGrid(32, 32);
-				Circle hit_circle = {0, 0, 5};
-				hbox.add(hit_circle);
 			}
 		Player(std::string&& sprite_filename):
 			x(SCREEN_WIDTH  / 2),
@@ -56,8 +55,6 @@ class Player
 			ymotion(0) {
 				sprite.load(std::move(sprite_filename));
 				sprite.setGrid(32, 32);
-				Circle hit_circle = {0, 0, 5};
-				hbox.add(hit_circle);
 			}
 
 		explicit Player(Player& p)    = delete;
@@ -69,14 +66,14 @@ class Player
 
 		void   handleEvent(const SDL_Event &e);
 		void   move(double time);
-		void   render(void) const;
+		void   render(void);
 		double angleFrom(double xf, double yf) const;
-		Hitbox hitbox(void) const;
+		Shape& objectShape(void) const;
 		double getX(void) const;
 		double getY(void) const;
 		void   setPosition(double px, double py);
 };
-COMMON_VERIFY_MOVE(Player);
+// COMMON_VERIFY_MOVE(Player);
 
 #endif /* PLAYER_H */
 

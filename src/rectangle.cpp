@@ -4,11 +4,18 @@ Rectangle::Rectangle(coord w, coord h, coord x, coord y, coord t):
 	Shape(w, h),
 	w(w), h(h), hw(w / 2.0), hh(h / 2.0)
 {
+	center = {x, y, std::min(w, h)};
 	chull.push_back({x - hw, y - hw});
 	chull.push_back({x - hw, y + hw});
 	chull.push_back({x + hw, y - hw});
 	chull.push_back({x + hw, y + hw});
-	vhull.push_back(center);
+	setTextureWidth(std::max(w, h) + 1);
+}
+
+Rectangle::operator SDL_Rect()
+{
+	auto v = chull[0];
+	return { (int) v.x, (int) v.y, (int) w, (int) h };
 }
 
 bool Rectangle::intersects(const Shape& s) const
@@ -17,12 +24,20 @@ bool Rectangle::intersects(const Shape& s) const
 		&& Range{-hh, hh}.overlaps(s.projectOn(t + (M_PI / 2.0)));
 }
 
+bool Rectangle::intersects(const VoronoiVertex& v) const
+{
+	return Range{-hw, hw}.overlaps(v.project(t))
+		&& Range{-hh, hh}.overlaps(v.project(t + (M_PI / 2.0)));
+}
+
 void Rectangle::render(void) const
 {
-	rectangleRGBA(gRenderer,
-			center.x - hw, center.y - hh,
-			center.x + hw, center.y + hh,
-			255, 0, 255, 255);
+	auto cx = textureSide / 2;
+	auto cy = textureSide / 2;
+	boxRGBA(gRenderer,
+			cx - hw, cy - hh,
+			cx + hw, cy + hh,
+			255, 255, 255, 127);
 }
 
 coord Rectangle::width(void) const
