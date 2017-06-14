@@ -21,9 +21,8 @@ class Polygon : public UnionShape
 
 		bool intersects(const Shape& s) const final override;
 		bool intersects(const Point& s) const;
+		Range project(coord on = 0.0, Vertex v = {0.0, 0.0}) const;
 		void render(void) const override;
-
-		Range project(coord on = 0.0) const override;
 };
 COMMON_VERIFY(Polygon);
 

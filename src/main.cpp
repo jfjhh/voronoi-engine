@@ -171,7 +171,7 @@ bool load_media(void)
 			b.texture->load(b.sprite_file, {255, 0, 0, 255});
 
 			// For fun.
-			b.texture->setBlendMode(SDL_BLENDMODE_ADD);
+			// b.texture->setBlendMode(SDL_BLENDMODE_ADD);
 		}
 		if (b.shape) {
 			b.shape->renewTexture();
@@ -211,6 +211,7 @@ int main(int argc, const char **argv)
 			M_PI / 4,
 			830, 10,
 			0,  0);
+	// d->setType(BulletType::CIRCLE);
 
 	// Add the danmaku to a stage.
 	auto s1 = std::make_shared<Stage>();
@@ -230,11 +231,10 @@ int main(int argc, const char **argv)
 	// DEBUG: Shapes.
 	auto testAngle = 0.0;
 	fputs("\tCreating test shape.\n", stderr);
-	auto test = Polygon(16, 3, (size_t) SCREEN_HEIGHT / 2);
+	auto test = Polygon(32, 13, (size_t) sqrt(SCREEN_WIDTH * SCREEN_HEIGHT / 2));
 	// auto test = Ellipse(SCREEN_WIDTH / 3.0, SCREEN_HEIGHT / 5.0);
 	// auto test = Circle(SCREEN_HEIGHT / 4);
 	// auto test = Rectangle(SCREEN_WIDTH / 3.0, SCREEN_HEIGHT / 5.0);
-	test.translate(SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0);
 
 	fputs("\nEntering Game Loop.\n", stderr);
 
@@ -295,27 +295,29 @@ int main(int argc, const char **argv)
 			}
 		}
 
-		// if (countedFrames % 10 == 0) {
-		// 	auto bl = std::make_shared<Bullet>(
-		// 			SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
-		// 			M_PI / 8,
-		// 			10, -2,
-		// 			20,  0,
-		// 			true);
-		// 	bl->setType(BulletType::RECT);
-		// 	s1->addPObject(bl);
+		// if (countedFrames % 5 == 0) {
+		// 	for (double a = 2 * M_PI / 6; a < 2 * M_PI; a += 2 * M_PI / 6) {
+		// 		auto q = std::make_shared<Bullet>(
+		// 				d->x, d->y,
+		// 				a,
+		// 				30, 1,
+		// 				20, 0);
+		// 		q->setType(BulletType::CIRCLE);
+		// 		s1->addPObject(q);
+		// 	}
 		// }
 
 		if (countedFrames % 5 == 0) {
-			for (double a = 2 * M_PI / 6; a < 2 * M_PI; a += 2 * M_PI / 6) {
-				auto q = std::make_shared<Bullet>(
-						d->x, d->y,
-						a,
-						30, 1,
-						20, 0);
-				q->setType(BulletType::CIRCLE);
-				s1->addPObject(q);
-			}
+        // Stress test.
+        for (double a = 2 * M_PI / 6; a < 2 * M_PI; a += 2 * M_PI / 6) {
+            auto q = std::make_shared<Bullet>(
+                    d->x, d->y,
+                    a,
+                    40, -1,
+                    15, 0);
+            q->setType(BulletType::RECT);
+            s1->addPObject(q);
+        }
 		}
 
 		// Update the stages.
@@ -328,6 +330,8 @@ int main(int argc, const char **argv)
 
 		// Check player collision with scene objects.
 		Shape &ph = player.objectShape();
+		// for (auto&& s: gStages) {
+		// }
 		if (s1->intersects(ph)) {
 			hit = true;
 			player.sprite.setColor(255, 128, 192);
@@ -408,8 +412,8 @@ int main(int argc, const char **argv)
 		stringRGBA(gRenderer, 8, 56, logText.str().c_str(), 255, 255, 255, 255);
 
 		// DEBUG: Shapes.
-		// test.renderTexture(testAngle);
-		testAngle += M_PI / 2048;
+		test.renderTexture(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, testAngle);
+		testAngle -= M_PI / 4096;
 
 		// Update the screen.
 		SDL_RenderPresent(gRenderer);

@@ -15,14 +15,14 @@ class Circle : public Ellipse
 		// For backwards-compatibility with an old Circle structure that
 		// mirrored SDL_Rect. Remove these members when the Hitbox => Shape
 		// migration is complete.
-		int x, y, r;
+		// int x, y, r;
 
 		Circle(coord x, coord y, coord r);
 		Circle(coord r): Circle(0.0, 0.0, r) {};
 
-		bool intersects(const Circle& t) const;
+		bool intersects(const Circle& s) const;
 		void render(void) const final override;
-		Range project(coord on) const final override;
+		Range project(coord on, Vertex v = {0.0, 0.0}) const final override;
 
 		// Circles are invariant under rotation, so do not waste time with
 		// rotating them.

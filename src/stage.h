@@ -21,25 +21,9 @@ class Stage : public Danmaku
 		std::vector<std::shared_ptr<PObject>> objects;
 		Stage(): Danmaku() {
 			shape = std::make_shared<Rectangle>(
-					SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
+					SCREEN_WIDTH,     SCREEN_HEIGHT,
 					SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 		};
-		// Stage(double x     = SCREEN_WIDTH  / 2,
-		// 		double y     = SCREEN_HEIGHT / 2,
-		// 		double t     = 0,
-		// 		double v     = 0,
-		// 		double w     = 0,
-		// 		double a     = 0,
-		// 		double aa    = 0,
-		// 		bool   die   = true,
-		// 		double vmax  = 1e6,
-		// 		double wmax  = 1e6,
-		// 		double amax  = 1e6,
-		// 		double aamax = 1e6,
-		// 		double ttl   = 1e6):
-		// 	PObject(x, y, t, v, w, a, aa, die, vmax, wmax, amax, aamax, ttl) {
-		// 		shape = std::make_shared<UnionShape>();
-		// 	}
 
 		/**
 		 * Destroys the stage.
@@ -60,6 +44,8 @@ class Stage : public Danmaku
 		 * Updates the stage's objects.
 		 */
 		virtual void update(void) override;
+
+		virtual bool intersects(const Shape& ps) const override;
 
 		/**
 		 * Renders the stage's objects.

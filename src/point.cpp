@@ -21,7 +21,7 @@ bool Point::intersects(const Shape& t) const
 bool Point::intersects(const Point& t) const
 {
 	auto v = t.vcenter();
-	return (center.x == v.x && center.y == v.y);
+	return (center.x + x == v.x + t.x && center.y + y == v.y + t.y);
 }
 
 void Point::render(void) const

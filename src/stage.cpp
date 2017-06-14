@@ -24,23 +24,33 @@ void Stage::addPObject(std::shared_ptr<PObject> d)
 void Stage::update(void)
 {
 	PObject::update();
-	for (auto it = objects.begin(); it != objects.end(); it++) {
+	for (auto it = objects.begin(); it != objects.end();) {
 		(*it)->update();
+		const auto& t = (*it)->shape;
+		if (t) {
+            t->translate((*it)->x, (*it)->y);
+			bool onscreen = shape->intersects(*t);
+			if (!onscreen) {
+				it = objects.erase(it);
+				continue;
+			}
+		}
+		it++;
 	}
+}
 
-	// const auto& s = shape;
-	// auto it = std::remove_if(objects.begin(), objects.end(),
-	// 		[s](std::shared_ptr<PObject> o)
-	// 		{
-	// 		auto t = o->shape;
-	// 		if (t) {
-	// 		// t->translate(o->x, o->y);
-	// 		fprintf(stderr, "<<OUT? (%f, %f)>>\r", o->x, o->y);
-	// 		return !s->intersects(*t);
-	// 		}
-	// 		return false;
-	// 		});
-	// objects.erase(it, objects.end());
+bool Stage::intersects(const Shape& ps) const
+{
+	for (auto it = objects.begin(); it != objects.end(); it++) {
+		if ((*it)->shape) {
+            // Such elegance, much wow.
+            (*it)->shape->translate((*it)->x, (*it)->y);
+			if ((*it)->shape->intersects(ps)) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 void Stage::render(double xoff, double yoff) const
@@ -52,7 +62,7 @@ void Stage::render(double xoff, double yoff) const
 				y + yoff - (texture->sheight() / 2));
 	}
 
-	shape->renderTexture();
+	// shape->renderTexture();
 
 	// Render the stage's objects.
 	for (size_t i = 0; i < objects.size(); i++) {

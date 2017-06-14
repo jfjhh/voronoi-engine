@@ -47,7 +47,7 @@ class UnionShape : virtual public Shape
 		void render(void) const override;
 		void translate(double x, double y) final override;
 		bool intersects(const Shape& t) const override;
-		Range project(coord on = 0.0) const override;
+		Range project(coord on = 0.0, Vertex v = {0.0, 0.0}) const override;
 		void setAngle(double to) final override;
 		void rotate(double by) final override;
 

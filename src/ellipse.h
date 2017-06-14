@@ -20,32 +20,11 @@ class Ellipse : virtual public Shape
 		Ellipse(const Ellipse& p) = default;
 		Ellipse& operator=(const Ellipse& p) = default;
 
-		Ellipse(Ellipse&& p):
-			Shape(2 * p.xRadius(), 2 * p.yRadius())
-		{
-			chull  = std::move(p.vertices());
-			vhull  = std::move(p.voronoiVertices());
-			center = p.vcenter();
-			t      = p.angle();
-			rx     = p.xRadius();
-			ry     = p.yRadius();
-		}
-		Ellipse& operator=(Ellipse&& p)
-		{
-			chull  = std::move(p.vertices());
-			vhull  = std::move(p.voronoiVertices());
-			center = p.vcenter();
-			t      = p.angle();
-			rx     = p.xRadius();
-			ry     = p.yRadius();
-			return *this;
-		}
-
-		bool intersects(const Shape& t) const final override;
-		bool intersects(const Point& t) const;
+		bool intersects(const Shape& s) const final override;
+		bool intersects(const Point& s) const;
 		void render(void) const override;
 
-		Range project(coord on = 0.0) const override;
+		Range project(coord on = 0.0, Vertex v = {0.0, 0.0}) const override;
 
 		coord xRadius(void) const;
 		coord yRadius(void) const;

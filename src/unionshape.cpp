@@ -57,14 +57,12 @@ bool UnionShape::intersects(const Shape& t) const
 	return false;
 }
 
-Range UnionShape::project(coord on) const
+Range UnionShape::project(coord on, Vertex v) const
 {
-	auto r = inverse_range;
-
+	auto r = Range{};
 	for (const auto& s: shapes) {
-		r.update(s->project(on));
+		r.update(s->project(on, {v.x + x, v.y + y}));
 	}
-
 	return r;
 }
 

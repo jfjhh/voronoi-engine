@@ -83,11 +83,11 @@ void Polygon::render(void) const
 	filledPolygonRGBA(gRenderer, xs.data(), ys.data(), size, 255, 255, 255, 63);
 }
 
-Range Polygon::project(coord on) const
+Range Polygon::project(coord on, Vertex v) const
 {
 	auto r = Range();
 	for (const auto& v: chull) {
-		r.update(v.project(on));
+		r.update(v.project(on, {v.x + x, v.y + y}));
 	}
 	return r;
 }

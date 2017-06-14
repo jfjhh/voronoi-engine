@@ -78,8 +78,6 @@ class PObject
 			hurt(true),
 			just(false),
 			parent(nullptr),
-			// shape(BULLETS[1].shape),
-			// texture(BULLETS[1].texture) {}
 			shape(nullptr),
 			texture(nullptr) {}
 

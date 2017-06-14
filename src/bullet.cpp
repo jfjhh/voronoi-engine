@@ -5,18 +5,24 @@ void Bullet::render(double xoff, double yoff) const
 	// Render the bullet's texture.
 	if (texture) {
 		if (parent) {
-			texture->render(x + parent->transX(), y + parent->transY());
+			texture->render(
+                    x + parent->transX() + xoff,
+                    y + parent->transY() + yoff,
+                    t);
 		} else {
-			texture->render(x, y);
+			texture->render(x + xoff, y + yoff, t);
 		}
 	}
 
 	// Render the bullet's shape.
 	if (shape && !texture) {
 		if (parent) {
-			shape->renderTexture(x + parent->transX(), y + parent->transY());
+			shape->renderTexture(
+                    x + parent->transX() + xoff,
+                    y + parent->transY() + yoff,
+                    t);
 		} else {
-			shape->renderTexture(x, y);
+			shape->renderTexture(x + xoff, y + yoff, t);
 		}
 	}
 }

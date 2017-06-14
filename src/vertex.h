@@ -5,6 +5,7 @@
 #ifndef VERTEX_H
 #define VERTEX_H
 
+#include "common.h"
 #include "commont.h"
 #include "range.h"
 
@@ -105,9 +106,9 @@ struct Vertex
 		};
 	};
 
-	Range project(coord on) const
+	Range project(coord on, Vertex t = {0.0, 0.0}) const
 	{
-		auto p = distanceTo() * cos(on);
+		auto p = distanceTo(t) * cos(on);
 		return Range(p, p);
 	};
 };
@@ -185,6 +186,8 @@ inline Vertex::operator VoronoiVertex(void) const
 {
 	return VoronoiVertex{*this};
 }
+
+coord distance(const Vertex& t = { 0.0, 0.0 });
 
 #endif /* VERTEX_H */
 

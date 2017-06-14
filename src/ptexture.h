@@ -53,6 +53,7 @@ class PTexture
 		void setSprite(int id);
 
 		void render(int x, int y) const;
+		void render(int x, int y, double t) const;
 		void render(int x, int y, int w, int h) const;
 		void render(int x, int y, int w, int h,
 				const SDL_Rect *const clip) const;

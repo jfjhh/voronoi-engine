@@ -30,6 +30,8 @@ class Shape
 		void renderTargeted(void);
 
 	public:
+		coord x, y; /**< Real center of shape. */
+
 		Shape(coord tw = 0.0);
 		Shape(coord tw, coord th);
 
@@ -38,7 +40,8 @@ class Shape
 		virtual void render(void) const;
 
 		void renderTexture(coord x, coord y, coord add_rot = 0.0);
-		void renderTexture(Vertex v) { renderTexture(v.x, v.y); };
+		void renderTexture(Vertex v, coord add_rot = 0.0)
+		{ renderTexture(v.x, v.y, add_rot); };
 		void renderTexture(coord add_rot = 0.0) { renderTexture(0.0, 0.0, add_rot); };
 		bool setTextureWidth(int tw);
 		bool renewTexture(void);
@@ -48,8 +51,8 @@ class Shape
 		virtual void rotate(coord by);
 		coord angle(void) const;
 
-		virtual Range projectOn(coord axis = 0.0) const;
-		virtual Range project(coord on = 0.0) const;
+		virtual Range projectOn(coord axis = 0.0, Vertex v = {0.0, 0.0}) const;
+		virtual Range project(coord on = 0.0, Vertex v = {0.0, 0.0}) const;
 
 		virtual void setVCenter(const VoronoiVertex& v);
 		VoronoiVertex vcenter(void) const;

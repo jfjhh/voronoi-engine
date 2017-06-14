@@ -1,6 +1,7 @@
 #include "shape.h"
 
-Shape::Shape(coord tw)
+Shape::Shape(coord tw):
+	x(0.0), y(0.0)
 {
 	t = 0.0;
 	center = {0.0, 0.0, tw / 2.0};
@@ -12,13 +13,8 @@ Shape::Shape(coord tw, coord th): Shape(std::max(tw, th)) {}
 
 void Shape::translate(coord x, coord y)
 {
-	// for (auto&& v: chull) {
-	// 	v.translate(Vertex{x, y});
-	// }
-	// for (auto&& v: vhull) {
-	// 	v.translate(VoronoiVertex{x, y});
-	// }
-	center.translate(VoronoiVertex{x, y});
+	this->x = x;
+	this->y = y;
 }
 
 void Shape::render(void) const
@@ -51,7 +47,8 @@ void Shape::renderTexture(coord x, coord y, coord add_rot)
 {
 	if (textureOK) {
 		shapeTexture->render(
-				x + center.x, y + center.y, NULL, t + add_rot, NULL, SDL_FLIP_NONE);
+				x + center.x, y + center.y,
+				NULL, t + add_rot, NULL, SDL_FLIP_NONE);
 	}
 }
 
@@ -94,17 +91,20 @@ coord Shape::angle(void) const
 	return t;
 }
 
-Range Shape::projectOn(coord axis) const
+Range Shape::projectOn(coord axis, Vertex v) const
 {
-	return project(t - axis);
+	auto vt = atan2(y, x);
+	auto on = vt > axis ? vt + axis : axis - vt;
+	// fprintf(stderr, "ProjON: %f <=> %f", axis, on);
+	return project(on, v);
 }
 
-Range Shape::project(coord on) const
+Range Shape::project(coord on, Vertex v) const
 {
 	auto r = inverse_range;
 
-	for (const auto& v: chull) {
-		r.update(v.distanceTo() * cos(on));
+	for (const auto& c: chull) {
+		r.update(c.distanceTo({x + v.y, y + v.x}) * cos(on));
 	}
 
 	return r;

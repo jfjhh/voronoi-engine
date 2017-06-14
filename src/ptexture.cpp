@@ -167,6 +167,11 @@ void PTexture::render(int x, int y) const
 	render(x, y, sw, sh);
 }
 
+void PTexture::render(int x, int y, double t) const
+{
+	render(x, y, sw, sh, sprite_box, t, NULL, SDL_FLIP_NONE);
+}
+
 void PTexture::render(int x, int y, int w, int h) const
 {
 	render(x, y, w, h, sprite_box);

@@ -23,6 +23,8 @@ class Point : virtual public Shape
 			vhull  = std::move(p.voronoiVertices());
 			center = p.vcenter();
 			t      = p.angle();
+			x      = p.x;
+			y      = p.y;
 		}
 		Point& operator=(Point&& p)
 		{
@@ -30,6 +32,8 @@ class Point : virtual public Shape
 			vhull  = std::move(p.voronoiVertices());
 			center = p.vcenter();
 			t      = p.angle();
+			x      = p.x;
+			y      = p.y;
 			return *this;
 		}
 

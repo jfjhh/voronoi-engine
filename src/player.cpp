@@ -109,6 +109,8 @@ void Player::move(double time)
 
 	y += vy * time;
 	y = std::max(std::min(y, SCREEN_HEIGHT - hh), hh);
+
+	shape->translate(x, y);
 }
 
 void Player::render(void)

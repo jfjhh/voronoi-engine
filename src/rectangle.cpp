@@ -5,6 +5,7 @@ Rectangle::Rectangle(coord w, coord h, coord x, coord y, coord t):
 	w(w), h(h), hw(w / 2.0), hh(h / 2.0)
 {
 	center = {x, y, std::min(w, h)};
+	translate(x, y);
 	chull.push_back({x - hw, y - hw});
 	chull.push_back({x - hw, y + hw});
 	chull.push_back({x + hw, y - hw});
@@ -20,14 +21,17 @@ Rectangle::operator SDL_Rect()
 
 bool Rectangle::intersects(const Shape& s) const
 {
-	return Range{-hw, hw}.overlaps(s.projectOn(t))
-		&& Range{-hh, hh}.overlaps(s.projectOn(t + (M_PI / 2.0)));
+	// auto r = Range{-hh + y, hh + y};
+	// fprintf(stderr, "<<Range: %f, %f>> ", r.min, r.max);
+	return Range{-hw + x, hw + x}.overlaps(s.projectOn(t))
+		&& Range{-hh + y, hh + y}.overlaps(s.projectOn(t + (M_PI / 2.0)));
 }
 
 bool Rectangle::intersects(const VoronoiVertex& v) const
 {
-	return Range{-hw, hw}.overlaps(v.project(t))
-		&& Range{-hh, hh}.overlaps(v.project(t + (M_PI / 2.0)));
+	fputs("<Rectangle <=> VoronoiVertex!> ", stderr);
+	return Range{-hw + x, hw + x}.overlaps(v.project(t))
+		&& Range{-hh + y, hh + y}.overlaps(v.project(t + (M_PI / 2.0)));
 }
 
 void Rectangle::render(void) const

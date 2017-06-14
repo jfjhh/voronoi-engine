@@ -32,10 +32,8 @@ void PObject::update(void)
 	if (parent != nullptr) {
 		xo = x;
 		yo = y;
-		x = 0;
-		y = 0;
-		// x = parent->transX();
-		// y = parent->transY();
+		x  = parent->transX();
+		y  = parent->transY();
 	}
 
 	// Update x position.
@@ -46,10 +44,15 @@ void PObject::update(void)
 
 	x += xo;
 	y += yo;
+
+    // if (shape) {
+    //     shape->translate(x, y);
+    // }
 }
 
 bool PObject::intersects(const Shape& s) const
 {
+    fprintf(stderr, "\t[%f, %f]\r", x, y);
 	return shape->intersects(s);
 }
 
