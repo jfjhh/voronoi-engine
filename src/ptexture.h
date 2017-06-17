@@ -49,7 +49,7 @@ class PTexture
 		void setColor(Uint8 red, Uint8 green, Uint8 blue);
 		void setBlendMode(SDL_BlendMode blending);
 		void setAlpha(Uint8 alpha);
-		void setGrid(int w, int h);
+		void setGrid(int gw, int gh);
 		void setSprite(int id);
 
 		void render(int x, int y) const;

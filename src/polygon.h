@@ -23,7 +23,7 @@ class Polygon : public UnionShape
 
 		bool intersects(const Shape& s) const final override;
 		bool intersects(const Point& s) const;
-		Range project(coord on = 0.0, Vertex v = {0.0, 0.0}) const;
+		Range project(coord on = 0.0, Vertex v = {0.0, 0.0}) const override;
 		void render(void) const override;
 
         bool isConcave(void) const;

@@ -317,7 +317,7 @@ int main(int argc, const char **argv)
         // 		s1->addPObject(q);
         // 	}
         // }
-
+        
         if (countedFrames % 5 == 0) {
             // Stress test.
             for (double a = 2 * M_PI / 6; a < 2 * M_PI; a += 2 * M_PI / 6) {
@@ -326,8 +326,7 @@ int main(int argc, const char **argv)
                         a,
                         40, -1,
                         15, 0);
-                // q->setType(BulletType::RECT);
-                q->setType(BulletType::CIRCLE);
+                q->setType(BulletType::RECT);
                 s1->addPObject(q);
             }
         }

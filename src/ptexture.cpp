@@ -134,14 +134,14 @@ void PTexture::setAlpha(Uint8 alpha)
 	SDL_SetTextureAlphaMod(texture, alpha);
 }
 
-void PTexture::setGrid(int w, int h)
+void PTexture::setGrid(int gw, int gh)
 {
-	if (0 >= w || w > w || 0 >= h || h > h) {
-		sw  = w;
-		sh = h;
+	if (0 >= gw || gw > w || 0 >= gh || gh > h) {
+		sw = gw;
+		sh = gh;
 	} else {
-		sw  = w;
-		sh = h;
+		sw = gw;
+		sh = gh;
 	}
 }
 

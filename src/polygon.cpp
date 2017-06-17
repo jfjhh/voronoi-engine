@@ -82,8 +82,6 @@ void Polygon::render(void) const
         // filledCircleRGBA(gRenderer, vx, vy, 3, 255, 0, 255, 255);
         *itx++ = vx;
         *ity++ = vy;
-        // *itx++ = v.x + (textureSide / 2);
-        // *ity++ = v.y + (textureSide / 2);
     }
     filledPolygonRGBA(gRenderer, xs.data(), ys.data(), size, 255, 255, 255, 63);
 }
