@@ -26,6 +26,8 @@ MACROS    += -DVERSION=\"$(VERSION)\"
 MACROS    += -DCOMMONT_CHECKS
 # CXXFLAGS   = -g -Wall -Werror -O2 -std=c++11 $(MACROS)
 CXXFLAGS   = -g -Wall -Werror -pedantic -Og -std=c++11 $(MACROS)
+CXXFLAGS  += -fsanitize=address
+
 CPPFLAGS  := $(shell $(SDLCONFIG) --cflags)
 EXTLIBS   := -lSDL2_image -lSDL2_ttf -lSDL2_gfx #-lSDL2_mixer
 LIBS      := $(shell $(SDLCONFIG) --libs) $(EXTLIBS)

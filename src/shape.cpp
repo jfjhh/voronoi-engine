@@ -39,6 +39,12 @@ void Shape::renderTargeted(void)
 	SDL_RenderClear(gRenderer);
 
 	render();
+    // Add in the center circle for debugging.
+    // circleRGBA(gRenderer,
+    //         center.x + (textureSide / 2),
+    //         center.y + (textureSide / 2),
+    //         center.r,
+    //         255, 0, 255, 255);
 
 	SDL_SetRenderTarget(gRenderer, old);
 }

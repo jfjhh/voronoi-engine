@@ -4,7 +4,7 @@ Rectangle::Rectangle(coord w, coord h, coord x, coord y, coord t):
 	Shape(w, h),
 	w(w), h(h), hw(w / 2.0), hh(h / 2.0)
 {
-	center = {x, y, std::min(w, h)};
+	center = {x, y, std::min(w, h) / 2};
 	translate(x, y);
 	chull.push_back({x - hw, y - hw});
 	chull.push_back({x - hw, y + hw});

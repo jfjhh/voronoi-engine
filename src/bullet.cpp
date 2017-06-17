@@ -15,7 +15,8 @@ void Bullet::render(double xoff, double yoff) const
 	}
 
 	// Render the bullet's shape.
-	if (shape && !texture) {
+	// if (shape && !texture) {
+	if (shape) {
 		if (parent) {
 			shape->renderTexture(
                     x + parent->transX() + xoff,

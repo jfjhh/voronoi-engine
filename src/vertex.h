@@ -32,7 +32,7 @@ struct Vertex
 	void translate(coord xoff, coord yoff)
 	{
 		x += xoff;
-		y += xoff;
+		y += yoff;
 	};
 	void translate(const Vertex& v)
 	{
@@ -41,7 +41,18 @@ struct Vertex
 
 	bool operator<(const Vertex& b) const
 	{
-		return distanceTo(*this) < distanceTo(b);
+        if (x < b.x) {
+            return true;
+        } else if (x > b.x) {
+            return false;
+        } else {
+            if (y <= b.y) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+		// return distanceTo(*this) < distanceTo(b);
 	}
 
 	bool operator<=(const Vertex& b) const
@@ -84,6 +95,15 @@ struct Vertex
 		return Vertex(*this) -= v;
 	};
 
+	bool operator==(const Vertex& v) const
+	{
+		return (x == v.x) && (y == v.y);
+	};
+	bool operator!=(const Vertex& v) const
+	{
+		return !(*this == v);
+	};
+
 	coord distanceTo(const Vertex& t = { 0.0, 0.0 }) const
 	{
 		auto dx = x - t.x;
@@ -111,6 +131,16 @@ struct Vertex
 		auto p = distanceTo(t) * cos(on);
 		return Range(p, p);
 	};
+
+    coord crossz(const Vertex& t) const
+    {
+        return (x * t.y - t.x * y);
+    };
+
+    coord dot(const Vertex& t) const
+    {
+        return (x * t.x + y * t.y);
+    };
 };
 COMMON_VERIFY(Vertex);
 
@@ -188,6 +218,23 @@ inline Vertex::operator VoronoiVertex(void) const
 }
 
 coord distance(const Vertex& t = { 0.0, 0.0 });
+
+int sign(coord a);
+
+Vertex intersection(
+        const Vertex a1, const Vertex a2,
+        const Vertex b1, const Vertex b2);
+
+static_assert(std::numeric_limits<float>::is_iec559, "IEEE 754 F.P. required.");
+const auto infinity_vertex = Vertex(
+        std::numeric_limits<coord>::infinity(),
+        std::numeric_limits<coord>::infinity());
+const auto ninfinity_vertex = Vertex(
+        -std::numeric_limits<coord>::infinity(),
+        -std::numeric_limits<coord>::infinity());
+const auto nan_vertex = Vertex(
+        std::numeric_limits<coord>::quiet_NaN(),
+        std::numeric_limits<coord>::quiet_NaN());
 
 #endif /* VERTEX_H */
 
