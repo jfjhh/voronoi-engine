@@ -8,6 +8,7 @@
 cmake_minimum_required(VERSION 3.4.0 FATAL_ERROR)
 
 project("Voronoi Engine")
+add_definitions(-DVERSION="0.0.1")
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/externals/sanitizers-cmake/cmake"
@@ -30,7 +31,7 @@ if (NOT CGAL_FOUND)
 endif()
 
 # include helper file
-include(${CGAL_USE_FILE})
+# include(${CGAL_USE_FILE})
 
 # Boost and its components
 find_package(Boost REQUIRED)

@@ -317,18 +317,28 @@ int main(int argc, const char **argv)
         // 		s1->addPObject(q);
         // 	}
         // }
-        
-        if (countedFrames % 5 == 0) {
-            // Stress test.
-            for (double a = 2 * M_PI / 6; a < 2 * M_PI; a += 2 * M_PI / 6) {
-                auto q = std::make_shared<Bullet>(
-                        d->x, d->y,
-                        a,
-                        40, -1,
-                        15, 0);
-                q->setType(BulletType::RECT);
-                s1->addPObject(q);
-            }
+
+        // if (countedFrames % 5 == 0) {
+        //     for (double a = 2 * M_PI / 6; a < 2 * M_PI; a += 2 * M_PI / 6) {
+        //         auto q = std::make_shared<Bullet>(
+        //                 d->x, d->y,
+        //                 a,
+        //                 40, -1,
+        //                 15, 0);
+        //         q->setType(BulletType::RECT);
+        //         s1->addPObject(q);
+        //     }
+        // }
+
+        // Stress test.
+        for (double a = 2 * M_PI / 16; a < 2 * M_PI; a += 2 * M_PI / 16) {
+            auto q = std::make_shared<Bullet>(
+                    d->x, d->y,
+                    a,
+                    10, -1,
+                    -10, 0);
+            q->setType(BulletType::CIRCLE);
+            s1->addPObject(q);
         }
 
         // Update the stages.

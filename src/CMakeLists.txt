@@ -42,7 +42,7 @@ add_executable(voronoi
 	)
 add_sanitizers(voronoi)
 
-add_to_cached_list(CGAL_EXECUTABLE_TARGETS voronoi)
+# add_to_cached_list(CGAL_EXECUTABLE_TARGETS voronoi)
 
 # Link the executable to CGAL and third-party libraries
 include_directories(

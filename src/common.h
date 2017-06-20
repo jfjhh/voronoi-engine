@@ -20,6 +20,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <cmath>
 #include <memory>
 #include <vector>
 #include <string>
