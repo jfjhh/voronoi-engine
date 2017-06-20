@@ -8,6 +8,7 @@
 #include "ptimer.h"
 #include "stage.h"
 #include "geometry.h"
+#include "apollonius.h"
 
 size_t SCREEN_WIDTH  = 480;
 size_t SCREEN_HEIGHT = 640;
@@ -171,7 +172,7 @@ bool load_media(void)
             b.texture->load(b.sprite_file, {255, 0, 0, 255});
 
             // For fun.
-            b.texture->setBlendMode(SDL_BLENDMODE_ADD);
+            // b.texture->setBlendMode(SDL_BLENDMODE_ADD);
         }
         if (b.shape) {
             b.shape->renewTexture();
@@ -236,15 +237,8 @@ int main(int argc, const char **argv)
     // auto test = Circle(SCREEN_HEIGHT / 4);
     // auto test = Rectangle(SCREEN_WIDTH / 3.0, SCREEN_HEIGHT / 5.0);
 
-    // auto test = Polygon(15, 2, 3 * SCREEN_WIDTH / 8);
-    // auto test = Polygon({
-    // {+100, +100},
-    // {-100, +100},
-    // {-100, -100},
-    // {+100, -100},
-    // });
-    fprintf(stderr, "Is the test Polygon concave?\n\t%s\n",
-            test.isConcave() ? "true" : "false");
+    // fprintf(stderr, "Is the test Polygon concave?\n\t%s\n",
+    //         test.isConcave() ? "true" : "false");
     // test.simplify();
 
     fputs("\nEntering Game Loop.\n", stderr);
@@ -259,10 +253,10 @@ int main(int argc, const char **argv)
         if (meanFPS > 1e6) { // Extremely high FPS are erroneous.
             meanFPS = 0.0;
         }
-        gFPS = meanFPS;
-        if (std::isnan(gFPS) || gFPS == 0.0) {
-            gFPS = SCREEN_FPS;
-        }
+        // gFPS = meanFPS;
+        // if (std::isnan(gFPS) || gFPS == 0.0) {
+        gFPS = SCREEN_FPS;
+        // }
         gTimeStep = 1.0 / gFPS;
 
         // Handle events on queue.
@@ -306,44 +300,48 @@ int main(int argc, const char **argv)
             }
         }
 
-        // if (countedFrames % 5 == 0) {
-        // 	for (double a = 2 * M_PI / 6; a < 2 * M_PI; a += 2 * M_PI / 6) {
-        // 		auto q = std::make_shared<Bullet>(
-        // 				d->x, d->y,
-        // 				a,
-        // 				30, 1,
-        // 				20, 0);
-        // 		q->setType(BulletType::CIRCLE);
-        // 		s1->addPObject(q);
-        // 	}
-        // }
-
-        // if (countedFrames % 5 == 0) {
-        //     for (double a = 2 * M_PI / 6; a < 2 * M_PI; a += 2 * M_PI / 6) {
-        //         auto q = std::make_shared<Bullet>(
-        //                 d->x, d->y,
-        //                 a,
-        //                 40, -1,
-        //                 15, 0);
-        //         q->setType(BulletType::RECT);
-        //         s1->addPObject(q);
-        //     }
-        // }
+        if (countedFrames % 5 == 0) {
+            for (double a = 2 * M_PI / 6; a < 2 * M_PI; a += 2 * M_PI / 6) {
+                auto q = std::make_shared<Bullet>(
+                        d->x, d->y,
+                        a,
+                        30, 1,
+                        20, 0);
+                q->setType(BulletType::CIRCLE);
+                s1->addPObject(q);
+            }
+        }
 
         // Stress test.
-        for (double a = 2 * M_PI / 16; a < 2 * M_PI; a += 2 * M_PI / 16) {
-            auto q = std::make_shared<Bullet>(
-                    d->x, d->y,
-                    a,
-                    10, -1,
-                    -10, 0);
-            q->setType(BulletType::CIRCLE);
-            s1->addPObject(q);
-        }
+        // for (double a = 2 * M_PI / 16; a < 2 * M_PI; a += 2 * M_PI / 16) {
+        //     auto q = std::make_shared<Bullet>(
+        //             d->x, d->y,
+        //             a,
+        //             10, -1,
+        //             -10, 0);
+        //     q->setType(BulletType::CIRCLE);
+        //     s1->addPObject(q);
+        // }
 
         // Update the stages.
         for (auto&& s: gStages) {
             s->update();
+        }
+
+        // Apollonius.
+        auto aprad = 96.0;
+        Sint16 ax, ay;
+        Uint8 ar;
+        auto px = player.getX();
+        auto py = player.getY();
+        auto s1v = s1->voronoiVertices(px, py, aprad);
+        // auto s1v = s1->voronoiVertices();
+        if (s1v.size() > 2) {
+            auto ap_vertex = apollonius_direction(
+                    px, py, s1->voronoiVertices(px, py, 128));
+            ax = ap_vertex.x;
+            ay = ap_vertex.y;
+            ar = ap_vertex.r;
         }
 
         // Move the player.
@@ -384,6 +382,13 @@ int main(int argc, const char **argv)
         // Draw the stages.
         for (auto&& s: gStages) {
             s->render();
+        }
+
+        // Draw the Apollonius direction.
+        filledCircleRGBA(gRenderer, px, py, aprad, 255, 255, 255, 63);
+        if (s1v.size() > 0) {
+            thickLineRGBA(gRenderer, px, py, ax, ay, 2u, 255, 255, 255, 255);
+            filledCircleRGBA(gRenderer, ax, ay, ar, 0, 255, 0, 128);
         }
 
         // Draw a crosshair line of dots.

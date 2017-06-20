@@ -67,6 +67,6 @@ double PObject::transY(void) const
 
 VoronoiVertex PObject::vpos(void) const
 {
-	return { x, y, shape->vcenter().r };
+	return { transX(), transY(), shape->vcenter().r };
 }
 

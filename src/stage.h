@@ -57,6 +57,9 @@ class Stage : public Danmaku
 		 */
 		void map(std::function<void(std::shared_ptr<PObject>,
 					std::shared_ptr<Stage>, size_t)> f);
+
+        VoronoiHull voronoiVertices(void) const;
+        VoronoiHull voronoiVertices(coord x, coord y, coord range) const;
 };
 
 #endif /* STAGE_H */

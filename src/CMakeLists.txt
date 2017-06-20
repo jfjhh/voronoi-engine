@@ -2,6 +2,8 @@
 #######################################
 
 add_executable(voronoi
+	apollonius.h
+	apollonius.cpp
 	bullet.cpp
 	bulletdata.cpp
 	bulletdata.h

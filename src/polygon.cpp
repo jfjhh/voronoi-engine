@@ -20,7 +20,6 @@ Polygon::Polygon(size_t n, size_t s, coord r):
     Shape(),
     UnionShape()
 {
-    fputs("(Constructing polygram.)", stderr);
     if (n < 3 || 1 > s || s >= n || r <= 0) {
         throw;
     }
@@ -102,30 +101,20 @@ bool Polygon::isConcave(void) const
 
 bool Polygon::isConcave(const ConvexHull& v) const
 {
-    for (const auto& t: v) {
-        fprintf(stderr, "(%f, %f)\n", t.x, t.y);
-    }
     // Assumes degenerate vertexes have been removed.
     // I.e. ----><---- (0 length) or ---->---->x (twice length).
     // Then the sign of crossz will never be zero.
     auto first = *(v.end()-1) - *(v.end()-2);
     auto last  = *(v.begin()) - *(v.end()-1);
     auto s     = sign(first.crossz(last));
-    fprintf(stderr, "[(%f, %f)x(%f, %f): %d]\n",
-            first.x, first.y, last.x, last.y, s);
     first  = *(v.begin()) - *(v.end()-1);
     last   = *(v.begin()+1) - *(v.begin());
     auto r = sign(first.crossz(last));
-    fprintf(stderr, "[(%f, %f)x(%f, %f): %d]\n",
-            first.x, first.y, last.x, last.y, r);
     if (r != s) { return true; }
     for (auto it = v.begin(); it < v.end() - 2; it++) {
         auto a = *(it+1) - *(it+0);
         auto b = *(it+2) - *(it+1);
         auto t = sign(a.crossz(b));
-        fprintf(stderr, "[(%f, %f)x(%f, %f): %d]\n",
-                a.x, a.y, b.x, b.y, t);
-        // fprintf(stderr, "%d ", t);
         if (s != t) {
             return true;
         }
@@ -154,7 +143,6 @@ pairsExcept(
         pairs.emplace_back(end);
     }
 
-    fprintf(stderr, "<<%lu>>", pairs.size());
     return pairs;
 }
 
