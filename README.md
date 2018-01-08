@@ -20,3 +20,32 @@ user-generated stages.
 
 The engine is currently in an early stage of development.
 
+Obtaining
+---------
+
+This project requires CGAL and SDL2 stuff. Additionally, it relies upon a CMake
+submodule, [sanitizers-cmake](https://github.com/arsenm/sanitizers-cmake). To
+automatically get this submodule when cloning, run:
+
+```sh
+git clone --recurse-submodules https://github.com/jfjhh/voronoi-engine.git
+```
+
+Building
+--------
+
+To build with CMake:
+
+```sh
+cd voronoi-engine
+mkdir build
+cd build
+cmake ..
+make -j`nproc`
+```
+
+Running
+-------
+
+From the build directory, run `./voronoi`.
+

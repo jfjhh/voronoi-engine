@@ -3,7 +3,6 @@
 *~
 voronoi
 research/
-externals/**
 build/
 media/**
 !media/*.jpg
